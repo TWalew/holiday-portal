@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FakeRest from "fakerest";
 import sinon from "sinon";
-import LoginForm from 'loginForm'
+import LoginForm from 'components/loginForm'
 
 let data = {
     'authors': [
