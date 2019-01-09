@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import App from 'index'
 
 class LoginForm extends React.Component {
     constructor(props) {
