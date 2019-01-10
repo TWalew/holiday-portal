@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FakeRest from "fakerest";
 import sinon from "sinon";
-import LoginForm from 'components/loginForm'
+import LoginForm from './js/components/loginForm'
 
 let data = {
     'authors': [
@@ -36,16 +36,26 @@ server.respondWith(restServer.getHandler());
 let req = new XMLHttpRequest();
 req.open("GET", "/users", false);
 req.send(null);
-this.state.credentials = JSON.parse(req.responseText);
 
 class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            password: '',
+            user: JSON.parse(req.responseText)
+        };
+    }
     render() {
         return (
-            <LoginForm credentials={this.state.credentials} />
+            <LoginForm user={this.state.user} />
         )
     }
 }
+
+
+const root = document.getElementById('root');
+
 ReactDOM.render(
     <App />,
-    document.getElementById('root')
-);
+root);

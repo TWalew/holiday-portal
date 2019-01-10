@@ -1,20 +1,21 @@
 import React from "react";
 import ReactDOM from 'react-dom';
+import { Router, Route, IndexRoute, hashHistory } from "react-router";
 
-class LoginForm extends React.Component {
+export default class LoginForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
-            password: '',
+            username: this.props.username,
+            password: this.props.password,
+            user: this.props.user
         };
-
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        if (event.target.type === 'text'){
+        if (event.target.type === 'text') {
             this.setState({
                 username: event.target.value
             })
@@ -29,8 +30,8 @@ class LoginForm extends React.Component {
     handleSubmit(event) {
 
         event.preventDefault();
-        for (let i = 0; i <= credentials.length - 1; i++) {
-            if (credentials[i].username === this.state.username && credentials[i].password === this.state.password) {
+        for (let i = 0; i <= this.state.user.length - 1; i++) {
+            if (this.state.user[i].username === this.state.username && this.state.user[i].password === this.state.password) {
                 alert('Success');
                 return
             }
@@ -39,6 +40,8 @@ class LoginForm extends React.Component {
     }
 
     render() {
+        console.log(this.props);
+        console.log(this.state);
         return (
             <form>
                 <label>
