@@ -1,6 +1,5 @@
 import React from "react";
-import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, hashHistory } from "react-router";
+import {Redirect} from "react-router-dom";
 
 export default class LoginForm extends React.Component {
     constructor(props) {
@@ -33,15 +32,19 @@ export default class LoginForm extends React.Component {
         for (let i = 0; i <= this.state.user.length - 1; i++) {
             if (this.state.user[i].username === this.state.username && this.state.user[i].password === this.state.password) {
                 alert('Success');
-                return
+                this.setState({
+                    toHome: true
+                });
+                return;
             }
         }
         alert('error');
     }
 
     render() {
-        console.log(this.props);
-        console.log(this.state);
+        if (this.state.toHome === true) {
+            return <Redirect to='/Home' />
+        }
         return (
             <form>
                 <label>
