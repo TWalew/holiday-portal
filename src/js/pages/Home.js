@@ -1,16 +1,12 @@
 import React from 'react'
-import Header from '../components/Header';
 import moment from "moment";
-import Calendar from 'react-calendar'
+import { Calendar, MonthView } from 'react-calendar'
+import WallChart from "../components/WallChart";
 
 export default class Home extends React.Component {
     render() {
         return (
             <div>
-                <Header />
-                <h1>HOMEPAGE</h1>
-                <h2><b>TODO: CALENDAR</b></h2>
-
                 <Calendar startDate={ moment() }
                           endDate={ moment().endOf('year') }
                           weekNumbers={true}
@@ -25,6 +21,18 @@ export default class Home extends React.Component {
                               ]
                           }
                 />
+                <br/>
+                <br/>
+                <Calendar onChange={(value) => alert('New date is: ' + value)}
+                          showNavigation={false}/>
+                <br/>
+                <MonthView activeStartDate={new Date(2019, 0, 1)}
+                            hover={new Date(2019,0,11)}
+                            onClick={(value) => alert('New date is: ' + value)}
+                            tileContent={({ date, view }) =>  <p>{date.getDay()}</p>}
+                            />
+
+                <WallChart/>
             </div>
         );
     }

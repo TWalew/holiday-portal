@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import moment from "moment";
+import LoginForm from './js/pages/loginForm';
+import Home from './js/pages/Home';
+import LoginStore from './js/stores/LoginStore';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router'
+import 'bootstrap/dist/css/bootstrap.min.css';
 import FakeRest from "fakerest";
 import sinon from "sinon";
-import moment from "moment";
-import LoginForm from './js/components/loginForm';
-import Home from './js/pages/Home';
-import MyCalendar from "./js/pages/MyCalendar";
-import { BrowserRouter, MemoryRouter, Route, Link } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 let data = {
     'users': [
         { id: 0, username: 'Toni', password: 'Valev' },
@@ -23,18 +22,12 @@ restServer.init(data);
 let server = sinon.fakeServer.create();
 server.respondWith(restServer.getHandler());
 
-
-let req = new XMLHttpRequest();
-req.open("GET", "/users", false);
-req.send(null);
-
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             username: '',
             password: '',
-            user: JSON.parse(req.responseText),
             toHome: false,
             date: moment().startOf('year'),
         };
@@ -42,7 +35,11 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <LoginForm user={this.state.user} />
+                <header>THIS IS A HEADER</header>
+                <br/>
+                {this.props.children}
+                <br/>
+                <footer>This is a FOOTER</footer>
             </div>
         )
     }
@@ -52,12 +49,10 @@ class App extends React.Component {
 const root = document.getElementById('root');
 
 ReactDOM.render(
-    <BrowserRouter>
-        <div>
-            <Route path='/Login' component={App} />
-            <Route path='/Home' component={Home} />
-            <Route path='/MyCalendar' component={MyCalendar} />
-        </div>
-    </BrowserRouter>,
-    //<App />,
+    <Router history={browserHistory}>
+        <Route path='/' component={App}>
+            <IndexRoute component={LoginForm} />
+            <Route path="Home" component={Home} />
+        </Route>
+    </Router>,
 root);

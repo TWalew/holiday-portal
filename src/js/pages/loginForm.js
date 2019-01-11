@@ -1,5 +1,5 @@
 import React from "react";
-import {Redirect} from "react-router-dom";
+import * as AuthenticationActions from "../actions/AuthenticationActions";
 
 export default class LoginForm extends React.Component {
     constructor(props) {
@@ -9,8 +9,8 @@ export default class LoginForm extends React.Component {
             password: this.props.password,
             user: this.props.user
         };
+        this.loginClicked = this.loginClicked.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
@@ -26,25 +26,14 @@ export default class LoginForm extends React.Component {
 
     }
 
-    handleSubmit(event) {
-
-        event.preventDefault();
-        for (let i = 0; i <= this.state.user.length - 1; i++) {
-            if (this.state.user[i].username === this.state.username && this.state.user[i].password === this.state.password) {
-                alert('Success');
-                this.setState({
-                    toHome: true
-                });
-                return;
-            }
-        }
-        alert('error');
+    loginClicked() {
+        const username = this.state.username;
+        const password = this.state.password;
+        AuthenticationActions.LoginAuth(username, password);
     }
 
     render() {
-        if (this.state.toHome === true) {
-            return <Redirect to='/Home' />
-        }
+
         return (
             <form>
                 <label>
@@ -55,7 +44,7 @@ export default class LoginForm extends React.Component {
                     Password:
                     <input type="password"  value={this.state.password} onChange={this.handleChange} />
                 </label>
-                <input type="submit" onClick={this.handleSubmit}/>
+                <input type="submit" value="Sign In" onClick={this.loginClicked}/>
             </form>
         )
     }
