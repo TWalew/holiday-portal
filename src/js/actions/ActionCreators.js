@@ -1,7 +1,11 @@
 export function LogIn(user) {
-    console.log(user);
     return {
         type: 'LOGIN',
         data: user
+    }
+}
+export function LogOut() {
+    return {
+        type: 'LOGOUT'
     }
 }

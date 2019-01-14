@@ -2,26 +2,28 @@ import { EventEmitter } from 'events';
 import dispatcher from '../dispatchers/Dispatcher'
 
 class LoginStore extends EventEmitter {
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
 
-        this.Authenticate = this.Authenticate.bind(this);
+        this.data = {
+          loggedIn: null,
+        };
     }
 
-    Authenticate(users) {
-        console.log(users);
+    getUser(){
+        return this.data.loggedIn;
     }
 
     handleActions(action) {
-        console.log('ACT', action);
         switch(action.type) {
             case "LOGIN": {
-                this.Authenticate(action.data);
+                this.data.loggedIn = action.data;
                 this.emit('change');
                 break;
             }
             case "LOGOUT": {
-                console.log("LOGOUT");
+                this.data.loggedIn = null;
+                this.emit('change');
                 break;
             }
         }

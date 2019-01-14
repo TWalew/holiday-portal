@@ -1,26 +1,15 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import moment from "moment";
 import LoginForm from './js/pages/loginForm';
 import Home from './js/pages/Home';
 import LoginStore from './js/stores/LoginStore';
+import LocationStore from  './js/stores/LocationStore';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import FakeRest from "fakerest";
-import sinon from "sinon";
-let data = {
-    'users': [
-        { id: 0, username: 'Toni', password: 'Valev' },
-        { id: 1, username: 'admin', password: 'admin' }
-    ]
-};
-// initialize fake REST server
-let restServer = new FakeRest.Server();
-restServer.init(data);
-
-// use sinon.js to monkey-patch XmlHttpRequest
-let server = sinon.fakeServer.create();
-server.respondWith(restServer.getHandler());
+import * as AuthenticationActions from "./js/actions/AuthenticationActions";
+import Header from "./js/components/Header";
+import Footer from "./js/components/Footer";
 
 class App extends React.Component {
     constructor(props) {
@@ -29,17 +18,23 @@ class App extends React.Component {
             username: '',
             password: '',
             toHome: false,
-            date: moment().startOf('year'),
+            date: moment().startOf('year')
         };
+        this.logOutClicked = this.logOutClicked.bind(this);
     }
+
+    logOutClicked(){
+        AuthenticationActions.LogOutAuth();
+    }
+
     render() {
         return (
             <div>
-                <header>THIS IS A HEADER</header>
+                <Header onClick={this.logOutClicked}/>
                 <br/>
                 {this.props.children}
                 <br/>
-                <footer>This is a FOOTER</footer>
+                <Footer/>
             </div>
         )
     }
@@ -52,7 +47,7 @@ ReactDOM.render(
     <Router history={browserHistory}>
         <Route path='/' component={App}>
             <IndexRoute component={LoginForm} />
-            <Route path="Home" component={Home} />
+            <Route path="/Home" component={Home} />
         </Route>
     </Router>,
 root);

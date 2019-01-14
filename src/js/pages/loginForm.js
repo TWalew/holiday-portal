@@ -1,5 +1,6 @@
 import React from "react";
 import * as AuthenticationActions from "../actions/AuthenticationActions";
+import '../../css/LoginForm.scss';
 
 export default class LoginForm extends React.Component {
     constructor(props) {
@@ -29,13 +30,14 @@ export default class LoginForm extends React.Component {
     loginClicked() {
         const username = this.state.username;
         const password = this.state.password;
+        console.log("STATE  :  " + this.state.username);
         AuthenticationActions.LoginAuth(username, password);
     }
 
     render() {
 
         return (
-            <form>
+            <form className='container'>
                 <label>
                     Username:
                     <input type="text" value={this.state.username} onChange={this.handleChange} />
@@ -44,7 +46,7 @@ export default class LoginForm extends React.Component {
                     Password:
                     <input type="password"  value={this.state.password} onChange={this.handleChange} />
                 </label>
-                <input type="submit" value="Sign In" onClick={this.loginClicked}/>
+                <input className="btn btn-outline-success" type="submit" value="Sign In" onClick={this.loginClicked}/>
             </form>
         )
     }
