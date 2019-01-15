@@ -14,7 +14,6 @@ export function LoginAuth(username, password) {
     AuthenticationService.Login(username, password).then(response => {
         if (response) {
             dispatcher.dispatch(LogIn(response));
-
         }
     });
 }

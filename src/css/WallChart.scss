@@ -1,3 +1,12 @@
+div.person_container a.person, div.person_container span.description {
+  position: relative;
+  left: 40px;
+  overflow: hidden;
+  max-width: 140px;
+  font-size: 14px;
+  text-overflow: ellipsis;
+}
+
 .calendar-timeline {
   .days-of-week {
     th {
@@ -21,6 +30,55 @@
       width: 32px;
       height: 32px;
       text-align: center;
+    }
+  }
+
+
+  .users-container {
+    tr {
+      padding-bottom: 15px;
+
+      .person {
+        height: 65px;
+        font-weight: 400;
+        left: 35px;
+
+        .img-circle {
+          position: relative;
+          width: 50px;
+          height: 50px;
+          border-radius: 999px;
+          margin-right: 10px;
+          float: left;
+          background-size: 100%;
+          color: #eee;
+          background-color: #c6c6c6;
+          font-size: 22px;
+          display: table;
+          text-align: center;
+          line-height: 50px;
+          font-weight: 400;
+        }
+
+        .person_container {
+          text-align: left;
+          width: 240px;
+          position: relative;
+          left: -50px;
+          padding-left: 50px;
+
+          a.person {
+            color: #862C50;
+            text-decoration: none;
+            top: 0;
+            left: 0;
+            max-height: 40px;
+            white-space: nowrap;
+            display: inline-block;
+            float: left;
+          }
+        }
+      }
     }
   }
 }

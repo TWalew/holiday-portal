@@ -18,3 +18,10 @@ export function UnLogged() {
         data: null
     }
 }
+
+export function GetUsers(users) {
+    return {
+        type: 'GETALLUSERS',
+        data: users
+    }
+}

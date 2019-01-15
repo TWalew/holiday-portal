@@ -8,6 +8,7 @@ import LocationStore from  './js/stores/LocationStore';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as AuthenticationActions from "./js/actions/AuthenticationActions";
+import * as UserActions from "./js/actions/UserActions";
 import Header from "./js/components/Header";
 import Footer from "./js/components/Footer";
 import Redirects from "./js/components/Redirects";

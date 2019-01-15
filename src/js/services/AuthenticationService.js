@@ -1,11 +1,13 @@
+const data = {
+    'users': [
+        { id: 0, username: 'Toni', password: 'Valev', name: 'Toni Valev' },
+        { id: 1, username: 'admin', password: 'admin', name: 'Urbanise' }
+    ]
+};
+export { data };
+
 export default class AuthenticationService {
     static Login(username, password) {
-        let data = {
-            'users': [
-                { id: 0, username: 'Toni', password: 'Valev', name: 'Toni Valev' },
-                { id: 1, username: 'admin', password: 'admin', name: 'Urbanise' }
-            ]
-        };
 
         return (
             Promise.resolve(data.users)

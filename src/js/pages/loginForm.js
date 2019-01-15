@@ -1,6 +1,7 @@
 import React from "react";
 import * as AuthenticationActions from "../actions/AuthenticationActions";
 import '../../css/LoginForm.scss';
+import * as UserActions from "../actions/UserActions";
 
 export default class LoginForm extends React.Component {
     constructor(props) {
@@ -32,6 +33,7 @@ export default class LoginForm extends React.Component {
         const password = this.state.password;
         console.log("STATE  :  " + this.state.username);
         AuthenticationActions.LoginAuth(username, password);
+        UserActions.GetAll();
     }
 
     render() {
