@@ -4,8 +4,17 @@ export function LogIn(user) {
         data: user
     }
 }
+
 export function LogOut() {
     return {
-        type: 'LOGOUT'
+        type: 'LOGOUT',
+        data: null
+    }
+}
+
+export function UnLogged() {
+    return {
+        type: 'UNLOGGED',
+        data: null
     }
 }

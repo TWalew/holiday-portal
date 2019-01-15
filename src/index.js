@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import * as AuthenticationActions from "./js/actions/AuthenticationActions";
 import Header from "./js/components/Header";
 import Footer from "./js/components/Footer";
+import Redirects from "./js/components/Redirects";
 
 class App extends React.Component {
     constructor(props) {
@@ -47,7 +48,10 @@ ReactDOM.render(
     <Router history={browserHistory}>
         <Route path='/' component={App}>
             <IndexRoute component={LoginForm} />
-            <Route path="/Home" component={Home} />
+
+            <Route component={Redirects}>
+                <Route path="/Home" component={Home} />
+            </Route>
         </Route>
     </Router>,
 root);

@@ -1,7 +1,6 @@
 import dispatcher from '../dispatchers/Dispatcher';
-import {LogIn, LogOut} from "./ActionCreators";
+import {LogIn, LogOut, UnLogged} from "./ActionCreators";
 import AuthenticationService from "../services/AuthenticationService";
-
 
 export function LoginAuth(username, password) {
     // let req = new XMLHttpRequest();
@@ -13,16 +12,21 @@ export function LoginAuth(username, password) {
     // req.send(null);
     // console.log(req.response);
     AuthenticationService.Login(username, password).then(response => {
-        if (response.length) {
-            dispatcher.dispatch(LogIn(response[0]));
+        if (response) {
+            dispatcher.dispatch(LogIn(response));
 
         }
     });
 }
+
 export function LogOutAuth() {
     AuthenticationService.Logout().then(response => {
         if (response) {
             dispatcher.dispatch(LogOut(response[0]));
         }
     })
+}
+
+export function UnLoggedAuth() {
+    dispatcher.dispatch(UnLogged())
 }

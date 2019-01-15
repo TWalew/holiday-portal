@@ -1,27 +1,26 @@
 .calendar-timeline {
-  ul {
-    padding: 0;
-
-    li {
-      text-align: center;
-      list-style-type: none;
-      display: inline-block;
-      padding: 5px;
-      margin: 5px;
-
-      b {
-        padding: 5px;
-        border: 1px solid #459FF3;
-        border-radius: 999px;
-      }
-
-      span {
-        width: 30px;
-        height: 30px;
-        margin: auto;
-        display: block;
+  .days-of-week {
+    th {
+      .wkday {
         text-align: center;
+        width: 30px;
+        display: block;
+        height: 30px;
+        padding-top: 3px;
+
+        &.day-today {
+          border: 1px solid #459FF3;
+          border-radius: 999px;
+        }
       }
+    }
+  }
+
+  .days-container {
+    td {
+      width: 32px;
+      height: 32px;
+      text-align: center;
     }
   }
 }

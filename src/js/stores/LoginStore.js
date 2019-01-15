@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import dispatcher from '../dispatchers/Dispatcher'
+import {getLocationStoreToken} from "./LocationStore";
 
 class LoginStore extends EventEmitter {
     constructor(){
@@ -22,6 +23,7 @@ class LoginStore extends EventEmitter {
                 break;
             }
             case "LOGOUT": {
+                dispatcher.waitFor([getLocationStoreToken()]);
                 this.data.loggedIn = null;
                 this.emit('change');
                 break;
@@ -30,6 +32,8 @@ class LoginStore extends EventEmitter {
     }
 }
 const loginStore = new LoginStore();
-dispatcher.register(loginStore.handleActions.bind(loginStore));
+const LoginStoreToken = dispatcher.register(loginStore.handleActions.bind(loginStore));
+const getLoginStoreToken = () => LoginStoreToken;
 
+export { getLoginStoreToken };
 export default loginStore;

@@ -8,28 +8,9 @@ export default class AuthenticationService {
         };
 
         return (
-            Promise.resolve(data.users).then(function (value) {
-                if (
-                    value.find(function (element) {
-                    console.log('element   ' +  element.username);
-                    console.log('username   ' + username);
-                    console.log('RETURN  ' + element.username === username);
-                    return element.username === username;
-                }) && value.find(function (element) {
-                    console.log('element   ' +  element.password);
-                    console.log('password   ' + password);
-                    console.log('RETURN  ' + element.password === password);
-                    return element.password === password;
-                })) {
-                    alert('SUCCESS');
-                    return value;
-                }else {
-                    alert('ERROR');
-                }
-                // console.log('logaa   ' + data.users.find(username));
-                //if (data.users.find(username) && data.users.find())
-            })
-        )
+            Promise.resolve(data.users)
+                .then(users => users.find(user => user.password === password && user.username === username))
+        );
 
 
         // FOR GETTING DATA FROM SERVER
