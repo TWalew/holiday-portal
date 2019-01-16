@@ -17,6 +17,7 @@ export default class WallChart extends React.Component {
         this.loginStoreChanged = this.loginStoreChanged.bind(this);
         this.userStoreChanged = this.userStoreChanged.bind(this);
         this.getDaysInMonth = this.getDaysInMonth.bind(this);
+        this.onDayClick = this.onDayClick.bind(this);
     }
 
     componentDidMount() {
@@ -46,6 +47,15 @@ export default class WallChart extends React.Component {
         });
     }
 
+    onDayClick(id, day, type) {
+        let data = {
+            id,
+            day,
+            type
+        };
+        UserActions.RequestDay(data);
+    }
+
     getDaysInMonth() {
         let year = new Date().getFullYear();
         let month = new Date().getMonth();
@@ -65,37 +75,47 @@ export default class WallChart extends React.Component {
 
     render() {
         const days = this.getDaysInMonth();
-        const today = new Date().getDate();
         const users = this.state.users;
         const DaysOFWeekComponents = days.map((day) => {
+            const today = new Date().getDate();
             return (
                 <th key={day.id}>
                     <span className={"wkday" + (today === day.id ? ' day-today' : '')}>{day.dayOfWeek}</span>
                 </th>
             )
         });
-        const DaysComponent = days.map((day) => {
-            return (
-                <td className={(day.dayOfWeek !== 'S' ? 'day' : 'nwd')} key={day.id}>
-                    <span>{day.id}</span>
-                </td>
-            )
-        });
+
         const PersonComponent = users.map((user) => {
+            let match = user.name.match(/\b(\w)/g);
+            let acronym = match.join('');
             return (
                 <tr key={user.id}>
                     <th className="person">
                         <div className="person_container">
-                            <span className="img-circle">TV</span>
+                            <span className="img-circle">{acronym}</span>
                             <a className='person'>{user.name}</a>
                         </div>
                     </th>
                     <td>
                         <table>
                             <tbody>
-                            <tr className="days-container">
-                                {DaysComponent}
-                            </tr>
+                            <tr className="days-container">{
+                                days.map((day) => {
+                                    return (
+                                        <td key={day.id}>
+                                            <div onClick={() => {
+                                                this.onDayClick(user.id, day.date, 'holiday')
+                                            }} className={'first ' + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')}>
+                                                <span>{day.id}</span>
+                                            </div>
+                                            <div onClick={() => {
+                                                this.onDayClick(user.id, day.date, 'holiday')
+                                            }} className={'second ' + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')}>
+                                            </div>
+                                        </td>
+                                    )
+                                })
+                            }</tr>
                             </tbody>
                         </table>
                     </td>
@@ -104,30 +124,33 @@ export default class WallChart extends React.Component {
         });
         return (
             <div className="calendar-timeline">
-                <h1>WALLCHART</h1>
+                <h1 className="text-center">WALLCHART</h1>
+                <br/>
                 <table>
                     <thead>
-                        <tr>
-                            <th><div></div></th>
-                            <th colSpan={10}>Pager Component here!</th>
-                        </tr>
-                        <tr>
-                            <th>
-                                <div></div>
-                            </th>
-                            <th>
-                                <table>
-                                    <thead>
-                                        <tr className="days-of-week">
-                                            {DaysOFWeekComponents}
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </th>
-                        </tr>
+                    <tr>
+                        <th>
+                            <div></div>
+                        </th>
+                        <th colSpan={10}>Pager Component here!</th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <div></div>
+                        </th>
+                        <th>
+                            <table>
+                                <thead>
+                                <tr className="days-of-week">
+                                    {DaysOFWeekComponents}
+                                </tr>
+                                </thead>
+                            </table>
+                        </th>
+                    </tr>
                     </thead>
                     <tbody className="users-container">
-                        {PersonComponent}
+                    {PersonComponent}
                     </tbody>
                 </table>
             </div>

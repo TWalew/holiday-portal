@@ -26,10 +26,40 @@ div.person_container a.person, div.person_container span.description {
   }
 
   .days-container {
+
     td {
       width: 32px;
       height: 32px;
       text-align: center;
+
+      .first, .second {
+        display: inline-block;
+        vertical-align: top;
+        height: 30px;
+        width: 15px !important;
+        min-width: 15px !important;
+        max-width: 15px !important;
+
+        &:hover {
+          background: rgba(150, 150, 150, .1);
+        }
+
+        &.nwd {
+          background: #E4E3E4;
+        }
+
+        span {
+          position: relative;
+          z-index: 998;
+          background: 0 0;
+          display: block;
+          height: 15px;
+          max-height: 15px;
+          margin: 0;
+          left: 7px;
+          top: 3px;
+        }
+      }
     }
   }
 

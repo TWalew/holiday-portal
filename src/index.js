@@ -33,9 +33,9 @@ class App extends React.Component {
         return (
             <div>
                 <Header onClick={this.logOutClicked}/>
-                <br/>
-                {this.props.children}
-                <br/>
+                    <br/>
+                    {this.props.children}
+                    <br/>
                 <Footer/>
             </div>
         )

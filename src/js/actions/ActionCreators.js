@@ -25,3 +25,10 @@ export function GetUsers(users) {
         data: users
     }
 }
+
+export function OnDayClicked(data) {
+    return {
+        type: 'ONDAYCLICKED',
+        data: data
+    }
+}

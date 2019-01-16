@@ -7,7 +7,7 @@ export default class Home extends React.Component {
 
     render() {
         return (
-            <div className="container">
+            <div className="container clearfix">
                 {/*<MonthView activeStartDate={new Date(2019, 0, 1)}*/}
                            {/*hover={new Date(2019, 0, 11)}*/}
                            {/*onClick={(value) => alert('New date is: ' + value)}*/}
