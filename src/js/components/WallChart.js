@@ -1,10 +1,11 @@
 import React from 'react';
 import moment from "moment";
-import '../../css/WallChart.scss';
-import LoginStore from "../stores/LoginStore";
-import UserStore from "../stores/UserStore";
+import DatePicker from 'react-date-picker'
 import {Modal, Button, OverlayTrigger} from "react-bootstrap";
 import * as UserActions from '../actions/UserActions';
+import LoginStore from "../stores/LoginStore";
+import UserStore from "../stores/UserStore";
+import '../../css/WallChart.scss';
 
 export default class WallChart extends React.Component {
     constructor(props) {
@@ -13,15 +14,17 @@ export default class WallChart extends React.Component {
         this.state = {
             show: false,
             loggedInUser: null,
+            datePickerStartDate: new Date(),
+            datePickerEndDate: new Date(),
             typeValue: '',
-            startingValue:'',
-            endingValue:'',
+            startingValue: 'morning',
+            endingValue: 'endOfDay',
             days: [],
             users: [],
             modalData: {
                 user: null,
                 day: null
-            }
+            },
         };
         this.loginStoreChanged = this.loginStoreChanged.bind(this);
         this.userStoreChanged = this.userStoreChanged.bind(this);
@@ -101,19 +104,26 @@ export default class WallChart extends React.Component {
     }
 
     handleSubmit() {
-        this.setState({
-                show: false
-            }
-        );
-        console.log('startingValue   ' , this.state.startingValue);
-        console.log('endingValue   ' , this.state.endingValue);
         let data = {
             id: this.state.modalData.user.id,
             day: this.state.modalData.day.date,
             type: this.state.typeValue,
-            half: 'first'
+            half: ''
         };
+        if (this.state.startingValue === 'morning' && this.state.endingValue === 'endOfDay') {
+            data.half = 'both';
+        }else if (this.state.startingValue === 'morning' && this.state.endingValue === 'lunchtime') {
+            data.half = 'first';
+        }else if (this.state.startingValue === 'afternoon' && this.state.endingValue === 'endOfDay') {
+            data.half = 'second'
+        }
+
+        console.log('HALF', data.half);
         UserActions.RequestDay(data);
+        this.setState({
+                show: false
+            }
+        );
     }
 
     updateTypeValue(evt) {
@@ -131,6 +141,9 @@ export default class WallChart extends React.Component {
             endingValue: evt.target.value
         });
     }
+
+    onStartValueChange = datePickerStartDate => this.setState({ datePickerStartDate });
+    onEndValueChange = datePickerEndDate => this.setState({ datePickerEndDate });
 
     render() {
         const days = this.getDaysInMonth();
@@ -167,7 +180,7 @@ export default class WallChart extends React.Component {
                                             }} className={'first '
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
-                                                return value[0].getTime() === day.date.getTime() && value[1] === 'first';
+                                                return value[0].getTime() === day.date.getTime() && ( value[1] === 'first' || value[1] === 'both' );
                                             }) ? ' holiday' : '')
                                             }>
                                                 <span>{day.id}</span>
@@ -177,7 +190,7 @@ export default class WallChart extends React.Component {
                                             }} className={'second '
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
-                                                return value[0].getTime() === day.date.getTime() && value[1] === 'second';
+                                                return value[0].getTime() === day.date.getTime() && ( value[1] === 'second' || value[1] === 'both' );
                                             }) ? ' holiday' : '')
                                             }>
                                             </div>
@@ -197,36 +210,50 @@ export default class WallChart extends React.Component {
 
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Book time off</Modal.Title>
+                        <Modal.Title className="text-center">Book time off</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <form>
+                            <DatePicker
+                                minDate={new Date()}
+                                clearIcon={null}
+                                calendarIcon={null}
+                                onChange={this.onStartValueChange}
+                                value={this.state.datePickerStartDate}
+                            />
                             <label>
-                                Starting
-                                <select name="Starting" value={this.state.startingValue} onChange={evt => this.updateStartingValue(evt)}>
+                                Starting :
+                                <select name="Starting" value={this.state.startingValue} onLoad={evt => this.updateStartingValue(evt)} onChange={evt => this.updateStartingValue(evt)}>
                                     <option value="morning">Morning</option>
                                     <option value="afternoon">Afternoon</option>
                                 </select>
                             </label>
+                            <DatePicker
+                                minDate={new Date()}
+                                clearIcon={null}
+                                calendarIcon={null}
+                                onChange={this.onEndValueChange}
+                                value={this.state.datePickerEndDate}ß
+                            />
                             <label>
-                                Ending
-                                <select name="Ending" value={this.state.endingValue} onChange={evt => this.updateEndingValue(evt)}>
+                                Ending :
+                                <select name="Ending" value={this.state.endingValue} onLoad={evt => this.updateStartingValue(evt)} onChange={evt => this.updateEndingValue(evt)}>
                                     <option value="lunchtime">Lunchtime</option>
                                     <option value="endOfDay">End of Day</option>
                                 </select>
                             </label>
                             <label>
-                                Type
+                                Type :
                                 <select name="BookType" value={this.state.typeValue} onChange={evt => this.updateTypeValue(evt)}>
                                     <option value="holiday">Holiday</option>
-                                    <option value="remote">Remote</option>
+                                    <option defaultValue value="remote">Remote</option>
                                 </select>
                             </label>
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button className="pull-right btn-success" onClick={ this.handleSubmit }>Submit</Button>
-                        <Button className="pull-left btn-danger" onClick={this.handleClose}>Close</Button>
+                        <Button className="pull-left btn-danger" onClick={ this.handleClose }>Close</Button>
                     </Modal.Footer>
                 </Modal>
 

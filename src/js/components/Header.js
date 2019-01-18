@@ -1,7 +1,7 @@
 import LoginStore from "../stores/LoginStore";
 import React from "react";
 import PropTypes from 'prop-types';
-import {Navbar, NavDropdown, NavbarBrand, Nav, NavItem, MenuItem, NavbarHeader} from 'react-bootstrap';
+import {Navbar, Nav, NavItem} from 'react-bootstrap';
 
 export default class Header extends React.Component {
 
