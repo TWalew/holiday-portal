@@ -13,8 +13,15 @@ export default class WallChart extends React.Component {
         this.state = {
             show: false,
             loggedInUser: null,
+            typeValue: '',
+            startingValue:'',
+            endingValue:'',
             days: [],
             users: [],
+            modalData: {
+                user: null,
+                day: null
+            }
         };
         this.loginStoreChanged = this.loginStoreChanged.bind(this);
         this.userStoreChanged = this.userStoreChanged.bind(this);
@@ -22,6 +29,7 @@ export default class WallChart extends React.Component {
         this.onDayClick = this.onDayClick.bind(this);
         this.handleShow = this.handleShow.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -79,11 +87,49 @@ export default class WallChart extends React.Component {
     }
 
     handleClose() {
-        this.setState({ show: false });
+        this.setState({show: false});
     }
 
-    handleShow() {
-        this.setState({ show: true });
+    handleShow(user, day) {
+        this.setState({
+            show: true,
+            modalData: {
+                user: user,
+                day: day
+            }
+        });
+    }
+
+    handleSubmit() {
+        this.setState({
+                show: false
+            }
+        );
+        console.log('startingValue   ' , this.state.startingValue);
+        console.log('endingValue   ' , this.state.endingValue);
+        let data = {
+            id: this.state.modalData.user.id,
+            day: this.state.modalData.day.date,
+            type: this.state.typeValue,
+            half: 'first'
+        };
+        UserActions.RequestDay(data);
+    }
+
+    updateTypeValue(evt) {
+        this.setState({
+            typeValue: evt.target.value
+        });
+    }
+    updateStartingValue(evt) {
+        this.setState({
+            startingValue: evt.target.value
+        });
+    }
+    updateEndingValue(evt) {
+        this.setState({
+            endingValue: evt.target.value
+        });
     }
 
     render() {
@@ -97,7 +143,7 @@ export default class WallChart extends React.Component {
                 </th>
             )
         });
-        console.log('UserS',users);
+        console.log('UserS', users);
         const PersonComponent = users.map((user) => {
             let match = user.name.match(/\b(\w)/g);
             let acronym = match.join('');
@@ -116,11 +162,13 @@ export default class WallChart extends React.Component {
                                 days.map((day) => {
                                     return (
                                         <td key={day.id}>
-                                            <div onClick={this.handleShow} className={'first '
+                                            <div onClick={() => {
+                                                this.handleShow(user, day)
+                                            }} className={'first '
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
                                                 return value[0].getTime() === day.date.getTime() && value[1] === 'first';
-                                            }) ? ' holiday': '')
+                                            }) ? ' holiday' : '')
                                             }>
                                                 <span>{day.id}</span>
                                             </div>
@@ -130,7 +178,7 @@ export default class WallChart extends React.Component {
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
                                                 return value[0].getTime() === day.date.getTime() && value[1] === 'second';
-                                            }) ? ' holiday': '')
+                                            }) ? ' holiday' : '')
                                             }>
                                             </div>
                                         </td>
@@ -155,21 +203,21 @@ export default class WallChart extends React.Component {
                         <form>
                             <label>
                                 Starting
-                                <select name="Starting">
+                                <select name="Starting" value={this.state.startingValue} onChange={evt => this.updateStartingValue(evt)}>
                                     <option value="morning">Morning</option>
                                     <option value="afternoon">Afternoon</option>
                                 </select>
                             </label>
                             <label>
                                 Ending
-                                <select name="Ending">
+                                <select name="Ending" value={this.state.endingValue} onChange={evt => this.updateEndingValue(evt)}>
                                     <option value="lunchtime">Lunchtime</option>
                                     <option value="endOfDay">End of Day</option>
                                 </select>
                             </label>
                             <label>
                                 Type
-                                <select name="BookType">
+                                <select name="BookType" value={this.state.typeValue} onChange={evt => this.updateTypeValue(evt)}>
                                     <option value="holiday">Holiday</option>
                                     <option value="remote">Remote</option>
                                 </select>
@@ -177,10 +225,10 @@ export default class WallChart extends React.Component {
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={this.handleClose}>Close</Button>
+                        <Button className="pull-right btn-success" onClick={ this.handleSubmit }>Submit</Button>
+                        <Button className="pull-left btn-danger" onClick={this.handleClose}>Close</Button>
                     </Modal.Footer>
                 </Modal>
-
 
 
                 <br/>
@@ -199,16 +247,16 @@ export default class WallChart extends React.Component {
                         <th>
                             <table>
                                 <thead>
-                                    <tr className="days-of-week">
-                                        {DaysOFWeekComponents}
-                                    </tr>
+                                <tr className="days-of-week">
+                                    {DaysOFWeekComponents}
+                                </tr>
                                 </thead>
                             </table>
                         </th>
                     </tr>
                     </thead>
                     <tbody className="users-container">
-                        {PersonComponent}
+                    {PersonComponent}
                     </tbody>
                 </table>
             </div>
