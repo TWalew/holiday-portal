@@ -8,7 +8,6 @@ export default class UserService {
         );
     }
     static RequestHoliday(holiday) {
-        alert('heyHoLetsGo');
         return (
             Promise.resolve(holiday)
                 .then(holiday => holiday)

@@ -18,7 +18,7 @@ class LoginStore extends EventEmitter {
     handleActions(action) {
         switch(action.type) {
             case "LOGIN": {
-                this.data.loggedIn = action.data;
+                this.data.loggedIn = {...action.data};
                 this.emit('change');
                 break;
             }

@@ -13,54 +13,78 @@ class UserStore extends EventEmitter {
     getUsers() {
         return this.data.users;
     }
-
-
-
-    updateStoreWithoutMutation(state, path, value){
-
-
-
-        // let newUsers = [this.data.users];
-        // newUsers[index] = {
-        //     ...newUsers[index],
-        //     holidays: [...newUsers[index].holidays, action.data.date],
-        // };
-        // this.data = {
-        //     ...this.data,
-        //     users: newUsers,
-        // };
-
-        let g_path = ['c', 'e', 2, 'g'];
+    // TODO FINISH THE FUNCTION AND REMOVE IT FROM HERE IN A NEW FILE THEN EXPORT IT AND USE IT IN ALL STORES
+    updateStoreWithoutMutation(state, path, value) {
+        // let g_path = ['c', 'e', 2, 'g'];
 
         let traverse_path = (path, obj) => {
             let currentObj = obj;
-            for(let segment of path) {
+            for (let segment of path) {
                 currentObj = currentObj[segment];
                 console.log('segment', segment);
                 console.log('currentObj', currentObj);
-                console.log({
-                    ...currentObj,
-                    [currentObj.segment]: currentObj
-                })
+                if (typeof segment === "string") {
+                    let newObj = [state];
+                    newObj[segment] = {
+                        ...newObj[segment],
+                        segment: [...newObj[segment].segment, value]
+                    };
+                    state = {
+                        ...state,
+                        segment: newObj
+                    };
+                    return state
+                }
+                console.log('test', currentObj);
             }
-            console.log('test',currentObj);
         };
-        console.log(traverse_path(path,state));
+        console.log(traverse_path(path, state));
     };
 
     handleActions(action) {
         switch (action.type) {
             case "GETALLUSERS": {
-                this.data.users = action.data;
+                this.data.users = [...action.data];
                 this.emit('change');
                 break;
             }
             case "ONDAYCLICKED": {
-                alert("USER STORE");
                 console.log(action.data);
-                this.updateStoreWithoutMutation(this.data,['users',[1], 'holidays', this.data.users[1].holidays.length],action.data.date);
-                // this.data.users[action.data.id].holidays = action.data.date;
-                //
+                //this.updateStoreWithoutMutation(this.data,['users',[1], 'holidays', this.data.users[1].holidays.length],action.data.date);
+
+                // WORKING IMMUTABLE EXAMPLE TODO A IMMUTABLE FUNCTION
+
+                let newUsers = [...this.data.users];
+                newUsers[action.data.id] = {
+                    ...newUsers[action.data.id],
+                    holidays: [
+                        ...newUsers[action.data.id].holidays,
+                        [action.data.day, action.data.half]
+                    ]
+                };
+                let newData = {
+                    ...this.data,
+                    users: newUsers
+                };
+                console.log('thisData', this.data);
+                console.log('newData',newData);
+                this.data = newData;
+                // let index = 0;
+                // console.log(newUsers[index]);
+                // newUsers[index] = {
+                //     ...newUsers[index],
+                //     holidays: [...newUsers[index].holidays, action.data.day],
+                // };
+                // this.data = {
+                //     ...this.data,
+                //     users: newUsers,
+                // };
+                // console.log(this.data);
+
+
+                // console.log(action.data.date);
+                // this.data.users[action.data.id].holidays.push(action.data.day);
+                // console.log(this.data.users);
                 // this.data = myCOllFunc(this.data,
                 //     ['users', index, 'holidays', this.data.users[index].holidays.length],
                 //     action.data.date);

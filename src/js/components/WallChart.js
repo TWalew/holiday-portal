@@ -3,21 +3,25 @@ import moment from "moment";
 import '../../css/WallChart.scss';
 import LoginStore from "../stores/LoginStore";
 import UserStore from "../stores/UserStore";
-import * as AuthenticationActions from "../actions/AuthenticationActions";
+import {Modal, Button, OverlayTrigger} from "react-bootstrap";
 import * as UserActions from '../actions/UserActions';
 
 export default class WallChart extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
-            days: [],
+            show: false,
             loggedInUser: null,
+            days: [],
             users: [],
         };
         this.loginStoreChanged = this.loginStoreChanged.bind(this);
         this.userStoreChanged = this.userStoreChanged.bind(this);
         this.getDaysInMonth = this.getDaysInMonth.bind(this);
         this.onDayClick = this.onDayClick.bind(this);
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
 
     componentDidMount() {
@@ -41,17 +45,18 @@ export default class WallChart extends React.Component {
 
     userStoreChanged() {
         let users = UserStore.getUsers();
-        console.log("USERSSS", users);
+        console.log("userStoreChanged", users);
         this.setState({
             users,
         });
     }
 
-    onDayClick(id, day, type) {
+    onDayClick(id, day, type, half) {
         let data = {
             id,
             day,
-            type
+            type,
+            half
         };
         UserActions.RequestDay(data);
     }
@@ -73,6 +78,14 @@ export default class WallChart extends React.Component {
         return days;
     }
 
+    handleClose() {
+        this.setState({ show: false });
+    }
+
+    handleShow() {
+        this.setState({ show: true });
+    }
+
     render() {
         const days = this.getDaysInMonth();
         const users = this.state.users;
@@ -84,7 +97,7 @@ export default class WallChart extends React.Component {
                 </th>
             )
         });
-
+        console.log('UserS',users);
         const PersonComponent = users.map((user) => {
             let match = user.name.match(/\b(\w)/g);
             let acronym = match.join('');
@@ -103,14 +116,22 @@ export default class WallChart extends React.Component {
                                 days.map((day) => {
                                     return (
                                         <td key={day.id}>
-                                            <div onClick={() => {
-                                                this.onDayClick(user.id, day.date, 'holiday')
-                                            }} className={'first ' + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')}>
+                                            <div onClick={this.handleShow} className={'first '
+                                            + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
+                                            + (user.holidays.find(function (value) {
+                                                return value[0].getTime() === day.date.getTime() && value[1] === 'first';
+                                            }) ? ' holiday': '')
+                                            }>
                                                 <span>{day.id}</span>
                                             </div>
                                             <div onClick={() => {
-                                                this.onDayClick(user.id, day.date, 'holiday')
-                                            }} className={'second ' + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')}>
+                                                this.onDayClick(user.id, day.date, 'holiday', 'second')
+                                            }} className={'second '
+                                            + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
+                                            + (user.holidays.find(function (value) {
+                                                return value[0].getTime() === day.date.getTime() && value[1] === 'second';
+                                            }) ? ' holiday': '')
+                                            }>
                                             </div>
                                         </td>
                                     )
@@ -125,6 +146,43 @@ export default class WallChart extends React.Component {
         return (
             <div className="calendar-timeline">
                 <h1 className="text-center">WALLCHART</h1>
+
+                <Modal show={this.state.show} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Book time off</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form>
+                            <label>
+                                Starting
+                                <select name="Starting">
+                                    <option value="morning">Morning</option>
+                                    <option value="afternoon">Afternoon</option>
+                                </select>
+                            </label>
+                            <label>
+                                Ending
+                                <select name="Ending">
+                                    <option value="lunchtime">Lunchtime</option>
+                                    <option value="endOfDay">End of Day</option>
+                                </select>
+                            </label>
+                            <label>
+                                Type
+                                <select name="BookType">
+                                    <option value="holiday">Holiday</option>
+                                    <option value="remote">Remote</option>
+                                </select>
+                            </label>
+                        </form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={this.handleClose}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
+
+
+
                 <br/>
                 <table>
                     <thead>
@@ -141,16 +199,16 @@ export default class WallChart extends React.Component {
                         <th>
                             <table>
                                 <thead>
-                                <tr className="days-of-week">
-                                    {DaysOFWeekComponents}
-                                </tr>
+                                    <tr className="days-of-week">
+                                        {DaysOFWeekComponents}
+                                    </tr>
                                 </thead>
                             </table>
                         </th>
                     </tr>
                     </thead>
                     <tbody className="users-container">
-                    {PersonComponent}
+                        {PersonComponent}
                     </tbody>
                 </table>
             </div>

@@ -1,6 +1,7 @@
 import LoginStore from "../stores/LoginStore";
 import React from "react";
 import PropTypes from 'prop-types';
+import {Navbar, NavDropdown, NavbarBrand, Nav, NavItem, MenuItem, NavbarHeader} from 'react-bootstrap';
 
 export default class Header extends React.Component {
 
@@ -8,7 +9,7 @@ export default class Header extends React.Component {
         super(props);
 
         this.state = {
-            loggedInUser: null,
+            loggedInUser: null
         };
         this.loginStoreChanged = this.loginStoreChanged.bind(this);
     }
@@ -30,18 +31,37 @@ export default class Header extends React.Component {
         });
     }
 
+    toggle() {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
+
     render() {
         let {loggedInUser} = this.state;
-
-        return <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a className="navbar-brand" href="#">Holiday Portal</a>
-            <span>{loggedInUser && loggedInUser.name}</span>
-            {
-                loggedInUser ? (
-                    <button className="btn btn-outline-danger" onClick={this.props.onClick}>Log Out</button>
-                ) : null
-            }
-        </nav>;
+        return (
+            <Navbar inverse collapseOnSelect>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        Holiday Portal
+                    </Navbar.Brand>
+                    <Navbar.Toggle/>
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav>
+                        <Navbar.Text>
+                            {loggedInUser && loggedInUser.name}
+                        </Navbar.Text>
+                    </Nav>
+                    <Nav pullRight>
+                        {loggedInUser ? (
+                            <NavItem onClick={this.props.onClick}>
+                                Log Out
+                            </NavItem>) : null}
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        );
     }
 }
 Header.propTypes = {onClick: PropTypes.func};
