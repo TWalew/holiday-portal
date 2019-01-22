@@ -10,7 +10,12 @@ export function GetAll() {
     });
 }
 
-export function RequestDayOff(data) {
+export function RequestDayOff(userID, daysOff, daysOffType) {
+    let data = {
+        id: userID,
+        days: daysOff,
+        type: daysOffType,
+    };
     UserService.RequestDayOff(data).then(response => {
         //if (response) {
             dispatcher.dispatch(OnRequestDayOff(data));

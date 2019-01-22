@@ -12,14 +12,11 @@ export default class WallChart extends React.Component {
     constructor(props) {
         super(props);
 
+
         this.state = {
             show: false,
-            year: new Date().getFullYear(),
-            month: new Date().getMonth(),
-            day: new Date().getDay(),
-            monthNames: ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ],
+            currentDate: moment(new Date()),
+            stopDate: moment(this.currentDate).add(1,'month').add(-1,'days'),
             loggedInUser: null,
             datePickerStartDate: new Date(),
             datePickerEndDate: new Date(),
@@ -70,15 +67,15 @@ export default class WallChart extends React.Component {
     }
 
     checkHalf(start, end, current) {
-        if (start.getTime() === end.getTime()) {
+        if (start.getDate() === end.getDate()) {
             if (this.state.startingValue === 'morning' && this.state.endingValue === 'endOfDay') {
-                return 'both'
+                return 'both';
             } else if (this.state.startingValue === 'morning' && this.state.endingValue === 'lunchtime') {
                 return 'first';
             } else if (this.state.startingValue === 'afternoon' && this.state.endingValue === 'endOfDay') {
                 return 'second';
             }
-        } else if (start.getTime() !== end.getTime() && start.getTime() === current.getTime()) {
+        } else if (start.getDate() !== end.getDate() && start.getDate() === current.getDate()) {
             if (this.state.startingValue === 'morning' && this.state.endingValue === 'endOfDay') {
                 return 'both'
             } else if (this.state.startingValue === 'morning' && this.state.endingValue === 'lunchtime') {
@@ -88,7 +85,7 @@ export default class WallChart extends React.Component {
             } else if (this.state.startingValue === 'afternoon' && this.state.endingValue === 'lunchtime') {
                 return 'second'
             }
-        } else if (start.getTime() !== end.getTime() && end.getTime() === current.getTime()) {
+        } else if (start.getDate() !== end.getDate() && end.getDate() === current.getDate()) {
             if (this.state.startingValue === 'morning' && this.state.endingValue === 'endOfDay') {
                 return 'both'
             } else if (this.state.startingValue === 'morning' && this.state.endingValue === 'lunchtime') {
@@ -101,22 +98,22 @@ export default class WallChart extends React.Component {
         } else return 'both'
     }
 
-    getDaysInMonth() {
-        let year = this.state.year;
-        let month = this.state.month;
-        let day = this.state.day;
-        let date = new Date(year, month, day);
-        let days = [];
-        while (date.getMonth() === month) {
-            days.push({
-                id: new Date(date).getDate(),
-                date: new Date(date),
-                dayOfWeek: new Date(date).toString().substring(0, 1)
+    getDaysInMonth(startDate, stopDate) {
+        var dateArray = [];
+        var currentDate = this.state.currentDate;
+        var stopDate = this.state.stopDate;
+        console.log("currentDate",currentDate);
+        console.log('stopDate',stopDate);
+        while (currentDate <= stopDate) {
+            dateArray.push({
+                id: moment(currentDate).get('date'),
+                date: moment(currentDate)._d,
+                dayOfWeek: moment(currentDate).toString().substring(0, 1)
             });
-            date.setDate(date.getDate() + 1);
+            currentDate = moment(currentDate).add(1, 'days');
         }
-
-        return days;
+        console.log('dateArray', dateArray);
+        return dateArray;
     }
 
     updateTypeValue(evt) {
@@ -170,26 +167,21 @@ export default class WallChart extends React.Component {
     handleSubmit() {
         let that = this;
         let dateArr = this.getDateArray(this.state.datePickerStartDate, this.state.datePickerEndDate);
-        let data = {
-            id: this.state.modalData.user.id,
-            days: [],
-            type: this.state.typeValue,
-        };
+        let days = [];
 
         dateArr.forEach(function (value, index, array) {
             if (index === 0) {
                 let half = that.checkHalf(array[0], array[array.length - 1], value);
-                data.days.push({day: value, half: half});
+                days.push({day: value, half: half});
             } else if (index === array.length - 1) {
                 let half = that.checkHalf(array[0], array[array.length - 1], value);
-                data.days.push({day: value, half: half});
+                days.push({day: value, half: half});
             } else {
                 let half = that.checkHalf(array[0], array[array.length - 1], value);
-                data.days.push({day: value, half: half})
+                days.push({day: value, half: half})
             }
         });
-        console.log('DATAAAAAAAAA : ', data);
-        UserActions.RequestDayOff(data);
+        UserActions.RequestDayOff(this.state.modalData.user.id, days, this.state.typeValue);
         this.setState({
                 show: false
             }
@@ -197,11 +189,10 @@ export default class WallChart extends React.Component {
     }
 
     changeMonth(direction) {
-        if (direction === 'next'){
-            alert('next');
-        }  else {
-            alert('prev');
-        }
+        this.setState({
+            currentDate: this.state.currentDate.add(direction,'month'),
+            stopDate:this.state.stopDate.add(direction,'month')
+        });
     }
 
     onStartValueChange = datePickerStartDate => this.setState({datePickerStartDate});
@@ -274,8 +265,7 @@ export default class WallChart extends React.Component {
         });
         return (
             <div className="calendar-timeline">
-                <h1 className="text-center">WALLCHART</h1>
-
+                TODO MATERIAL DESIGN FOR SELECTS ITS OPEN I GOOGLE CHROME
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
                         <Modal.Title className="text-center">Book time off</Modal.Title>
@@ -310,7 +300,6 @@ export default class WallChart extends React.Component {
                                         </div>
                                         <div className="time">
                                             <select name="Starting" value={this.state.startingValue}
-                                                    onLoad={evt => this.updateStartingValue(evt)}
                                                     onChange={evt => this.updateStartingValue(evt)}>
                                                 <option value="morning">Morning</option>
                                                 <option value="afternoon">Afternoon</option>
@@ -333,7 +322,6 @@ export default class WallChart extends React.Component {
                                         </div>
                                         <div className="time">
                                             <select name="Ending" value={this.state.endingValue}
-                                                    onLoad={evt => this.updateStartingValue(evt)}
                                                     onChange={evt => this.updateEndingValue(evt)}>
                                                 <option
                                                     disabled={this.state.datePickerStartDate.getDate() === this.state.datePickerEndDate.getDate() && this.state.startingValue === 'afternoon'}
@@ -365,16 +353,16 @@ export default class WallChart extends React.Component {
                         </th>
                         <th className="month-pagination" colSpan={10}>
                             <a onClick={() => {
-                                this.changeMonth('prev');
+                                this.changeMonth(-1);
                             }}>
                                 <FontAwesomeIcon icon="arrow-left"/>
                             </a>
+                            <span className='text-center'>{this.state.currentDate.format('MMMM')} {this.state.currentDate.get('year')}</span>
                             <a onClick={() => {
-                                this.changeMonth('next');
+                                this.changeMonth(+1);
                             }}>
                                 <FontAwesomeIcon icon="arrow-right"/>
                             </a>
-                            <span>{this.state.monthNames[this.state.month]} {this.state.year}</span>
                         </th>
                     </tr>
                     <tr>

@@ -1,6 +1,8 @@
 import {EventEmitter} from 'events';
 import dispatcher from '../dispatchers/Dispatcher'
 
+const ACT_GETALLUSERS = 'GETALLUSERS';
+
 class UserStore extends EventEmitter {
     constructor() {
         super();
@@ -8,6 +10,15 @@ class UserStore extends EventEmitter {
         this.data = {
             users: [],
         };
+
+        this._actionMap = {
+            [ACT_GETALLUSERS]: this._getAllUsers,
+
+        };
+    }
+
+    _getAllUsers(actionData) {
+
     }
 
     getUsers() {
@@ -42,6 +53,7 @@ class UserStore extends EventEmitter {
     };
 
     handleActions(action) {
+        this._actionMap[action.type] && this._actionMap[action.type](action.data);
         switch (action.type) {
             case "GETALLUSERS": {
                 this.data.users = [...action.data];
@@ -59,7 +71,8 @@ class UserStore extends EventEmitter {
                 let newUsers = [...this.data.users];
                 if (action.data.type === 'holiday') {
                     days.forEach(function (day) {
-                        newUsers[action.data.id] = {
+                        let ind = newUsers.findIndex(u => u.id === action.data.id);
+                        newUsers[ind] = {
                             ...newUsers[action.data.id],
                             holidays: [
                                 ...newUsers[action.data.id].holidays,
@@ -69,7 +82,7 @@ class UserStore extends EventEmitter {
                     });
                 } else if (action.data.type === 'remote') {
                     days.forEach(function (day) {
-                        newUsers[action.data.id] = {
+                        newUsers[newUsers.findIndex(u => u.id === action.data.id)] = {
                             ...newUsers[action.data.id],
                             remoteDays: [
                                 ...newUsers[action.data.id].remoteDays,
