@@ -26,9 +26,9 @@ export function GetUsers(users) {
     }
 }
 
-export function OnDayClicked(data) {
+export function OnRequestDayOff(data) {
     return {
-        type: 'ONDAYCLICKED',
+        type: 'REQUESTDAYSOFF',
         data: data
     }
 }

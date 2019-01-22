@@ -7,7 +7,7 @@ export default class UserService {
                 .then(users => users)
         );
     }
-    static RequestHoliday(holiday) {
+    static RequestDayOff(holiday) {
         return (
             Promise.resolve(holiday)
                 .then(holiday => holiday)

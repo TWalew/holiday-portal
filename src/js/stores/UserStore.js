@@ -48,20 +48,39 @@ class UserStore extends EventEmitter {
                 this.emit('change');
                 break;
             }
-            case "ONDAYCLICKED": {
-                console.log(action.data);
+            case "REQUESTDAYSOFF": {
+                console.log('ACTION', action.data);
                 //this.updateStoreWithoutMutation(this.data,['users',[1], 'holidays', this.data.users[1].holidays.length],action.data.date);
 
                 // WORKING IMMUTABLE EXAMPLE TODO A IMMUTABLE FUNCTION
 
+
+                let days = action.data.days;
                 let newUsers = [...this.data.users];
-                newUsers[action.data.id] = {
-                    ...newUsers[action.data.id],
-                    holidays: [
-                        ...newUsers[action.data.id].holidays,
-                        [action.data.day, action.data.half]
-                    ]
-                };
+                if (action.data.type === 'holiday') {
+                    days.forEach(function (day) {
+                        newUsers[action.data.id] = {
+                            ...newUsers[action.data.id],
+                            holidays: [
+                                ...newUsers[action.data.id].holidays,
+                                day
+                            ]
+                        };
+                    });
+                } else if (action.data.type === 'remote') {
+                    days.forEach(function (day) {
+                        newUsers[action.data.id] = {
+                            ...newUsers[action.data.id],
+                            remoteDays: [
+                                ...newUsers[action.data.id].remoteDays,
+                                day
+                            ]
+                        };
+                    });
+                }
+
+
+
                 let newData = {
                     ...this.data,
                     users: newUsers

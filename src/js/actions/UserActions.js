@@ -1,5 +1,5 @@
 import dispatcher from '../dispatchers/Dispatcher';
-import {GetUsers, OnDayClicked} from "./ActionCreators";
+import {GetUsers, OnRequestDayOff} from "./ActionCreators";
 import UserService from "../services/UserService";
 
 export function GetAll() {
@@ -10,10 +10,10 @@ export function GetAll() {
     });
 }
 
-export function RequestDay(data) {
-    UserService.RequestHoliday(data).then(response => {
+export function RequestDayOff(data) {
+    UserService.RequestDayOff(data).then(response => {
         //if (response) {
-            dispatcher.dispatch(OnDayClicked(data));
+            dispatcher.dispatch(OnRequestDayOff(data));
         //}
     });
 }

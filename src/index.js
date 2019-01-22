@@ -12,6 +12,11 @@ import Header from "./js/components/Header";
 import Footer from "./js/components/Footer";
 import Redirects from "./js/components/Redirects";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faArrowLeft, faArrowRight} from '@fortawesome/free-solid-svg-icons'
+
+library.add(faArrowLeft, faArrowRight);
 
 class App extends React.Component {
     constructor(props) {

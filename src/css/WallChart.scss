@@ -34,8 +34,33 @@ div.person_container a.person, div.person_container span.description {
     }
   }
 
-  .days-container {
+  .month-pagination {
+    a {
+      color: #747478;
+      font-size: 24px;
+      width: 35px;
+      padding: 10px;
+      letter-spacing: normal;
+      word-wrap: normal;
+      direction: ltr;
+      border-radius: 50%;
+      background-size: cover;
+      transition: background-color ease-in-out .1s;
 
+      &:hover {
+        background-color: rgba(0, 0, 0, .1);
+        color: #000;
+      }
+    }
+
+    span {
+      font-size: 24px;
+      margin: 0 15px;
+      color: #747478;
+    }
+  }
+
+  .days-container {
     td {
       @include zero(0);
       width: 32px;
@@ -56,11 +81,15 @@ div.person_container a.person, div.person_container span.description {
         }
 
         &.nwd {
-          background: #E4E3E4;
+          background: #E4E3E4 !important;
         }
 
         &.holiday {
           background: #c69;
+        }
+
+        &.remote {
+          background: #6c9;
         }
 
         span {
@@ -77,7 +106,6 @@ div.person_container a.person, div.person_container span.description {
       }
     }
   }
-
 
   .users-container {
     tr {
@@ -122,6 +150,36 @@ div.person_container a.person, div.person_container span.description {
             display: inline-block;
             float: left;
           }
+        }
+      }
+    }
+  }
+}
+
+.modal-content {
+  .modal-header {
+    color: #862C50;
+  }
+
+  .modal-body {
+    .form-group {
+      label {
+        text-align: left;
+        color: #862C50;
+      }
+
+      &.type {
+        label {
+          text-align: center;
+        }
+      }
+
+      .clearfix {
+        text-align: left;
+
+        .date, .time {
+          margin-right: 25px;
+          display: inline-block;
         }
       }
     }
