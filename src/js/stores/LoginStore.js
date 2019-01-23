@@ -2,6 +2,9 @@ import { EventEmitter } from 'events';
 import dispatcher from '../dispatchers/Dispatcher'
 import {getLocationStoreToken} from "./LocationStore";
 
+const ACT_LOGIN = 'LOGIN';
+const ACT_LOGOUT = 'LOGOUT';
+
 class LoginStore extends EventEmitter {
     constructor(){
         super();
@@ -9,26 +12,30 @@ class LoginStore extends EventEmitter {
         this.data = {
           loggedIn: null,
         };
+
+        this._actionMap = {
+            [ACT_LOGIN]: this._login.bind(this),
+            [ACT_LOGOUT]: this._logout.bind(this),
+        };
     }
 
-    getUser(){
+    getUser() {
         return this.data.loggedIn;
     }
 
+    _login(actionData) {
+        this.data.loggedIn = {...actionData};
+        this.emit('change');
+    }
+
+    _logout(actionData) {
+        dispatcher.waitFor([getLocationStoreToken()]);
+        this.data.loggedIn = null;
+        this.emit('change');
+    }
+
     handleActions(action) {
-        switch(action.type) {
-            case "LOGIN": {
-                this.data.loggedIn = {...action.data};
-                this.emit('change');
-                break;
-            }
-            case "LOGOUT": {
-                dispatcher.waitFor([getLocationStoreToken()]);
-                this.data.loggedIn = null;
-                this.emit('change');
-                break;
-            }
-        }
+        this._actionMap[action.type] && this._actionMap[action.type](action.data);
     }
 }
 const loginStore = new LoginStore();

@@ -65,6 +65,7 @@ div.person_container a.person, div.person_container span.description {
       text-align: center;
 
       .first, .second {
+        cursor: pointer;
         @include zero(0);
         display: inline-block;
         vertical-align: top;
@@ -172,4 +173,7 @@ div.person_container a.person, div.person_container span.description {
       }
     }
   }
+}
+.menu{
+  width: 200px;
 }
