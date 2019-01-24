@@ -32,3 +32,10 @@ export function OnRequestDayOff(data) {
         data: data
     }
 }
+
+export function OnCancelRequestedDayOff(data) {
+    return {
+        type: 'CANCELREQUESTEDDAYOFF',
+        data: data
+    }
+}

@@ -13,4 +13,10 @@ export default class UserService {
                 .then(holiday => holiday)
         );
     }
+    static CancelRequestedHoliday(holiday) {
+        return (
+            Promise.resolve(holiday)
+                .then(holiday => holiday)
+        );
+    }
 }

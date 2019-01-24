@@ -3,13 +3,14 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import moment from "moment";
 import DatePicker from 'react-date-picker'
 import Popup from 'reactjs-popup'
-import {Modal, Button} from "react-bootstrap";
+import {Modal} from "react-bootstrap";
 import * as UserActions from '../actions/UserActions';
 import LoginStore from "../stores/LoginStore";
 import UserStore from "../stores/UserStore";
 import '../../css/WallChart.scss';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 const typeValues = [
     {
@@ -21,7 +22,28 @@ const typeValues = [
         label: 'Remote'
     }
 ];
-let typeVal = '';
+const startingValues = [
+    {
+        value: 'morning',
+        label: 'Morning',
+    },
+    {
+        value: 'afternoon',
+        label: 'Afternoon',
+    }
+];
+const endingValues = [
+    {
+        value: 'lunchtime',
+        label: 'Lunchtime',
+    },
+    {
+        value: 'endOfDay',
+        label: 'End of Day',
+    }
+];
+
+let typeVal = 'holidays';
 const morning = 'morning';
 const lunchtime = 'lunchtime';
 const endOfDay = 'endOfDay';
@@ -33,7 +55,7 @@ export default class WallChart extends React.Component {
 
         this.state = {
             showModal: false,
-            typeValue: '',
+            typeValue: 'holidays',
             startingValue: 'morning',
             endingValue: 'endOfDay',
             currentDate: moment(new Date()),
@@ -57,6 +79,7 @@ export default class WallChart extends React.Component {
         this.handleModalShow = this.handleModalShow.bind(this);
         this.handleModalClose = this.handleModalClose.bind(this);
         this.handleModalSubmit = this.handleModalSubmit.bind(this);
+        this.handleModalCancel = this.handleModalCancel.bind(this);
         this.monthPagination = this.monthPagination.bind(this);
         this.checkDaysOff = this.checkDaysOff.bind(this);
     }
@@ -121,11 +144,9 @@ export default class WallChart extends React.Component {
     }
 
     getDaysInMonth() {
-        var dateArray = [];
-        var currentDate = this.state.currentDate;
-        var stopDate = this.state.stopDate;
-        console.log("currentDate", currentDate);
-        console.log('stopDate', stopDate);
+        let dateArray = [];
+        let currentDate = this.state.currentDate;
+        let stopDate = this.state.stopDate;
         while (currentDate <= stopDate) {
             dateArray.push({
                 id: moment(currentDate).get('date'),
@@ -134,8 +155,24 @@ export default class WallChart extends React.Component {
             });
             currentDate = moment(currentDate).add(1, 'days');
         }
-        console.log('dateArray', dateArray);
         return dateArray;
+    }
+
+    monthPagination(direction) {
+        this.setState({
+            currentDate: this.state.currentDate.add(direction, 'month'),
+            stopDate: this.state.stopDate.add(direction, 'month')
+        });
+    }
+
+    checkDaysOff(user, day, array) {
+        user[array].find(function (el) {
+            if (moment(el.day).format('L') === moment(day.date).format('L')) {
+                typeVal = [array];
+            } else {
+                typeVal = 'holidays';
+            }
+        });
     }
 
     updateTypeValue(evt) {
@@ -173,14 +210,6 @@ export default class WallChart extends React.Component {
 
     handleModalClose() {
         this.setState({showModal: false});
-    }
-
-    checkDaysOff(user, day, array) {
-        user[array].find(function (el) {
-            if (moment(el.day).format('L') === moment(day.date).format('L')) {
-                typeVal = [array];
-            }
-        });
     }
 
     handleModalShow(user, day) {
@@ -221,11 +250,29 @@ export default class WallChart extends React.Component {
         );
     }
 
-    monthPagination(direction) {
-        this.setState({
-            currentDate: this.state.currentDate.add(direction, 'month'),
-            stopDate: this.state.stopDate.add(direction, 'month')
+    handleModalCancel() {
+        let that = this;
+        let canceledDateArr = this.getDateArray(this.state.datePickerStartDate, this.state.datePickerEndDate);
+        let canceledDays = [];
+
+        canceledDateArr.forEach(function (value, index, array) {
+            if (index === 0) {
+                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
+                canceledDays.push({day: value, half: half});
+            } else if (index === array.length - 1) {
+                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
+                canceledDays.push({day: value, half: half});
+            } else {
+                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
+                canceledDays.push({day: value, half: half})
+            }
         });
+
+        UserActions.CancelRequestedHoliday(this.state.modalData.user.id, canceledDays, this.state.typeValue);
+        this.setState({
+                showModal: false
+            }
+        );
     }
 
     onStartValueChange = datePickerStartDate => this.setState({datePickerStartDate});
@@ -235,14 +282,18 @@ export default class WallChart extends React.Component {
         const days = this.getDaysInMonth();
         const users = this.state.users;
         const DaysOFWeekComponents = days.map((day) => {
-            const today = new Date().getDate();
+            const today = new Date();
             return (
                 <th key={day.id}>
-                    <span className={"wkday" + (today === day.id ? ' day-today' : '')}>{day.dayOfWeek}</span>
+                    <span className={
+                        "wkday"
+                        + (today.getDate() === day.id && moment(today).format('L') === moment(day.date).format('L') ? ' day-today' : '')}
+                    >
+                        {day.dayOfWeek}
+                    </span>
                 </th>
             )
         });
-        console.log('UserS', users);
         const PersonComponent = users.map((user) => {
             let match = user.name.match(/\b(\w)/g);
             let acronym = match.join('');
@@ -266,10 +317,10 @@ export default class WallChart extends React.Component {
                                                  className={'first '
                                                  + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                                  + (user.holidays.find(function (value) {
-                                                     return value.day.getDate() === day.date.getDate() && (value.half === 'first' || value.half === 'both');
+                                                     return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'first' || value.half === 'both');
                                                  }) ? ' holiday' : '')
                                                  + (user.remoteDays.find(function (value) {
-                                                     return value.day.getDate() === day.date.getDate() && (value.half === 'first' || value.half === 'both');
+                                                     return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'first' || value.half === 'both');
                                                  }) ? ' remote' : '')
                                                  }>
                                                 <span>{day.id}</span>
@@ -279,10 +330,10 @@ export default class WallChart extends React.Component {
                                             }} className={'second '
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
-                                                return value.day.getDate() === day.date.getDate() && (value.half === 'second' || value.half === 'both');
+                                                return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'second' || value.half === 'both');
                                             }) ? ' holiday' : '')
                                             + (user.remoteDays.find(function (value) {
-                                                return value.day.getDate() === day.date.getDate() && (value.half === 'second' || value.half === 'both');
+                                                return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'second' || value.half === 'both');
                                             }) ? ' remote' : '')
                                             }>
                                             </div>
@@ -296,6 +347,7 @@ export default class WallChart extends React.Component {
                 </tr>
             )
         });
+        console.log('UserS', users);
         return (
             <div className="calendar-timeline">
                 <Modal show={this.state.showModal} onHide={this.handleModalClose}>
@@ -305,43 +357,37 @@ export default class WallChart extends React.Component {
                     <Modal.Body>
                         <form>
                             <div className='row clearfix'>
-                                <div className="col-sm-6 form-group type">
-                                    <label htmlFor="typeSel">Type:</label>
-                                    <select id="typeSel"
-                                            name="BookType"
-                                            value={this.state.typeValue}
-                                            onChange={evt => this.updateTypeValue(evt)}>
-                                        <option defaultValue value="holidays">Holiday</option>
-                                        <option value="remoteDays">Remote</option>
-                                    </select>
-                                </div>
-                                <div className='col-sm-6 form-group'>
-                                    <TextField
-                                        select
-                                        label="Type"
-                                        value={this.state.typeValue}
-                                        className='menu'
-                                        onChange={evt => this.updateTypeValue(evt)}
-                                        SelectProps={{
-                                            MenuProps: {
-                                                className: 'menu',
-                                            },
-                                        }}
-                                        margin="normal"
-                                    >
-                                        {typeValues.map(option => (
-                                            <MenuItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
+                                <div className='col-sm-12 form-group'>
+                                    <div className='clearfix'>
+                                        <div className='type'>
+                                            <TextField
+                                                select
+                                                label="Type"
+                                                value={this.state.typeValue}
+                                                className='menu'
+                                                onChange={evt => this.updateTypeValue(evt)}
+                                                SelectProps={{
+                                                    MenuProps: {
+                                                        className: 'menu',
+                                                    },
+                                                }}
+                                                margin="normal"
+                                            >
+                                                {typeValues.map(option => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="row clearfix">
                                 <div className="col-sm-6 form-group">
-                                    <label htmlFor="fromDate">Starting:</label>
                                     <div className="clearfix">
                                         <div className="date">
+                                            <label htmlFor="fromDate">Starting:</label>
                                             <DatePicker
                                                 id='fromDate'
                                                 clearIcon={null}
@@ -351,18 +397,32 @@ export default class WallChart extends React.Component {
                                             />
                                         </div>
                                         <div className="time">
-                                            <select name="Starting" value={this.state.startingValue}
-                                                    onChange={evt => this.updateStartingValue(evt)}>
-                                                <option value="morning">Morning</option>
-                                                <option value="afternoon">Afternoon</option>
-                                            </select>
+                                            <TextField
+                                                select
+                                                label="From:"
+                                                value={this.state.startingValue}
+                                                className='menu'
+                                                onChange={evt => this.updateStartingValue(evt)}
+                                                SelectProps={{
+                                                    MenuProps: {
+                                                        className: 'menu',
+                                                    },
+                                                }}
+                                                margin="normal"
+                                            >
+                                                {startingValues.map(option => (
+                                                    <MenuItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="col-sm-6 form-group">
-                                    <label for="toDate">Ending:</label>
                                     <div className="clearfix">
                                         <div className="date">
+                                            <label htmlFor="toDate">Ending:</label>
                                             <DatePicker
                                                 id="toDate"
                                                 clearIcon={null}
@@ -372,18 +432,28 @@ export default class WallChart extends React.Component {
                                             />
                                         </div>
                                         <div className="time">
-                                            <select name="Ending" value={this.state.endingValue}
-                                                    onChange={evt => this.updateEndingValue(evt)}>
-                                                <option
-                                                    disabled={this.state.datePickerStartDate.getDate() === this.state.datePickerEndDate.getDate() && this.state.startingValue === 'afternoon'}
-                                                    value="lunchtime">
-                                                    Lunchtime
-                                                </option>
-                                                <option
-                                                    value="endOfDay">
-                                                    End of Day
-                                                </option>
-                                            </select>
+                                            <TextField
+                                                select
+                                                label="To:"
+                                                value={this.state.endingValue}
+                                                className='menu'
+                                                onChange={evt => this.updateEndingValue(evt)}
+                                                SelectProps={{
+                                                    MenuProps: {
+                                                        className: 'menu',
+                                                    },
+                                                }}
+                                                margin="normal"
+                                            >
+                                                {endingValues.map(option => (
+                                                    <MenuItem key={option.value} value={option.value}
+                                                              disabled={option.value === 'lunchtime' &&
+                                                              this.state.datePickerStartDate.getDate() === this.state.datePickerEndDate.getDate() &&
+                                                              this.state.startingValue === 'afternoon'}>
+                                                        {option.label}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                         </div>
                                     </div>
                                 </div>
@@ -391,8 +461,15 @@ export default class WallChart extends React.Component {
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button className="pull-right btn-success" onClick={this.handleModalSubmit}>Submit</Button>
-                        <Button className="pull-left btn-danger" onClick={this.handleModalClose}>Close</Button>
+                        <Button variant="outlined" color="primary" size="large" className='pull-right'
+                                onClick={this.handleModalSubmit}>Submit</Button>
+
+                        <Button variant="outlined" color="default" size="large" className='pull-left'
+                                onClick={this.handleModalClose}>Close</Button>
+                        <div className='col-sm-7 text-center'>
+                            <Button variant="outlined" color="secondary" size="large"
+                                    onClick={this.handleModalCancel}>Cancel Holiday</Button>
+                        </div>
                     </Modal.Footer>
                 </Modal>
                 <br/>
@@ -403,6 +480,20 @@ export default class WallChart extends React.Component {
                             <div></div>
                         </th>
                         <th className="month-pagination" colSpan={10}>
+                            <div>
+                                <h2 className='text-center'>Legend</h2>
+                                <div className='text-center'>
+                                    <label>
+                                        Holiday :
+                                        <div className='legend-holiday'></div>
+                                    </label>
+                                    <label>
+                                        Remote :
+                                        <div className='legend-remote'></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <br/>
                             <a onClick={this.monthPagination.bind(this, -1)}>
                                 <FontAwesomeIcon icon="arrow-left"/>
                             </a>

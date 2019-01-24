@@ -49,6 +49,23 @@ div.person_container a.person, div.person_container span.description {
       }
     }
 
+    label {
+      margin: 0 20px;
+      .legend-holiday {
+        width: 32px;
+        height: 32px;
+        background-color: #c69;
+        margin: auto;
+      }
+
+      .legend-remote {
+        width: 32px;
+        height: 32px;
+        background-color: #6c9;
+        margin: auto;
+      }
+    }
+
     span {
       display: inline-block;
       width: 88%;
@@ -148,6 +165,10 @@ div.person_container a.person, div.person_container span.description {
 .modal-content {
   .modal-header {
     color: #862C50;
+
+    h4 {
+      font-size: 2em;
+    }
   }
 
   .modal-body {
@@ -155,16 +176,41 @@ div.person_container a.person, div.person_container span.description {
       label {
         text-align: left;
         color: #862C50;
+        font-size: 1.1em;
       }
 
-      &.type {
-        label {
-          text-align: center;
+      .type {
+        div {
+          font-size: 1em;
+
+          label {
+            font-size: 1.5em;
+            top: -5px;
+          }
         }
       }
 
       .clearfix {
         text-align: left;
+
+        .date {
+          top: 110px;
+        }
+
+        .time {
+          bottom: 20px;
+
+          div {
+            margin-top: 3px;
+            font-size: 1em;
+
+            label {
+              bottom: 22px;
+              top: -9px;
+              font-size: 1.5em;
+            }
+          }
+        }
 
         .date, .time {
           margin-right: 25px;
@@ -173,7 +219,24 @@ div.person_container a.person, div.person_container span.description {
       }
     }
   }
+
+  .modal-footer {
+    div {
+      button {
+        margin-left: 25px;
+      }
+    }
+
+    button {
+      font-size: 0.9em;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+  }
 }
-.menu{
-  width: 200px;
+
+.menu {
+  width: 100%;
+  margin: 0;
+  bottom: 20px;
 }

@@ -1,5 +1,5 @@
 import dispatcher from '../dispatchers/Dispatcher';
-import {GetUsers, OnRequestDayOff} from "./ActionCreators";
+import {GetUsers, OnRequestDayOff, OnCancelRequestedDayOff} from "./ActionCreators";
 import UserService from "../services/UserService";
 
 export function GetAll() {
@@ -18,7 +18,20 @@ export function RequestDayOff(userID, daysOff, daysOffType) {
     };
     UserService.RequestDayOff(data).then(response => {
         //if (response) {
-            dispatcher.dispatch(OnRequestDayOff(data));
+        dispatcher.dispatch(OnRequestDayOff(data));
+        //}
+    });
+}
+
+export function CancelRequestedHoliday(userID, canceledDaysOff, canceledDaysOffType) {
+    let data = {
+        id: userID,
+        days: canceledDaysOff,
+        type: canceledDaysOffType,
+    };
+    UserService.CancelRequestedHoliday(data).then(response => {
+        //if (response) {
+        dispatcher.dispatch(OnCancelRequestedDayOff(data));
         //}
     });
 }

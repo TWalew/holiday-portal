@@ -2,6 +2,12 @@ import LoginStore from "../stores/LoginStore";
 import React from "react";
 import PropTypes from 'prop-types';
 import {Navbar, Nav, NavItem} from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
+
+const loginButton = {
+    fontSize: '16px',
+    margin: '5px',
+};
 
 export default class Header extends React.Component {
 
@@ -55,9 +61,9 @@ export default class Header extends React.Component {
                     </Nav>
                     <Nav pullRight>
                         {loggedInUser ? (
-                            <NavItem onClick={this.props.onClick}>
+                            <Button variant="text" color="secondary" style={loginButton} onClick={this.props.onClick}>
                                 Log Out
-                            </NavItem>) : null}
+                            </Button>) : null}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
