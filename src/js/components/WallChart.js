@@ -297,7 +297,6 @@ export default class WallChart extends React.Component {
         const PersonComponent = users.map((user) => {
             let match = user.name.match(/\b(\w)/g);
             let acronym = match.join('');
-            const ok = false;
             return (
                 <tr key={user.id}>
                     <th className="person">
@@ -317,10 +316,14 @@ export default class WallChart extends React.Component {
                                                  className={'first '
                                                  + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                                  + (user.holidays.find(function (value) {
-                                                     return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'first' || value.half === 'both');
+                                                     return moment(value.day).format('L') ===
+                                                         moment(day.date).format('L') &&
+                                                         (value.half === 'first' || value.half === 'both');
                                                  }) ? ' holiday' : '')
                                                  + (user.remoteDays.find(function (value) {
-                                                     return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'first' || value.half === 'both');
+                                                     return moment(value.day).format('L') ===
+                                                         moment(day.date).format('L') &&
+                                                         (value.half === 'first' || value.half === 'both');
                                                  }) ? ' remote' : '')
                                                  }>
                                                 <span>{day.id}</span>
@@ -330,10 +333,14 @@ export default class WallChart extends React.Component {
                                             }} className={'second '
                                             + (day.dayOfWeek !== 'S' ? 'day' : 'nwd')
                                             + (user.holidays.find(function (value) {
-                                                return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'second' || value.half === 'both');
+                                                return moment(value.day).format('L') ===
+                                                    moment(day.date).format('L') &&
+                                                    (value.half === 'second' || value.half === 'both');
                                             }) ? ' holiday' : '')
                                             + (user.remoteDays.find(function (value) {
-                                                return moment(value.day).format('L') === moment(day.date).format('L') && (value.half === 'second' || value.half === 'both');
+                                                return moment(value.day).format('L') ===
+                                                    moment(day.date).format('L') &&
+                                                    (value.half === 'second' || value.half === 'both');
                                             }) ? ' remote' : '')
                                             }>
                                             </div>

@@ -78,7 +78,6 @@ class LoginForm extends React.Component {
     loginClicked() {
         const username = this.state.username;
         const password = this.state.password;
-        console.log("STATE  :  " + this.state.username);
         AuthenticationActions.LoginAuth(username, password);
         UserActions.GetAll();
     }
