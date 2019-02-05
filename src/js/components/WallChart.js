@@ -487,19 +487,6 @@ export default class WallChart extends React.Component {
                             <div></div>
                         </th>
                         <th className="month-pagination" colSpan={10}>
-                            <div>
-                                <h2 className='text-center'>Legend</h2>
-                                <div className='text-center'>
-                                    <label>
-                                        Holiday :
-                                        <div className='legend-holiday'></div>
-                                    </label>
-                                    <label>
-                                        Remote :
-                                        <div className='legend-remote'></div>
-                                    </label>
-                                </div>
-                            </div>
                             <br/>
                             <a onClick={this.monthPagination.bind(this, -1)}>
                                 <FontAwesomeIcon icon="arrow-left"/>

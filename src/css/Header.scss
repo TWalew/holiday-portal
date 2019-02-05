@@ -1,0 +1,30 @@
+.legend {
+  width: 60%;
+  text-align: center;
+}
+
+label {
+  margin: 0 20px;
+
+  .legend-holiday {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    background-color: #c69;
+    margin: auto;
+  }
+
+  .legend-remote {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    background-color: #6c9;
+    margin: auto;
+  }
+}
+
+.legend-paper {
+  h2 {
+    margin-top: 0;
+  }
+}

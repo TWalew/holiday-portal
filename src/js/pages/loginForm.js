@@ -132,23 +132,8 @@ class LoginForm extends React.Component {
                 </Paper>
             </main>
         );
-
-
-        // return (
-        //     <form className='container'>
-        //         <label>
-        //             Username:
-        //             <input type="text" value={this.state.username} onChange={this.handleChange} />
-        //         </label>
-        //         <label>
-        //             Password:
-        //             <input type="password"  value={this.state.password} onChange={this.handleChange} />
-        //         </label>
-        //         <input className="login-button" type="submit" value="Sign In" onClick={this.loginClicked}/>
-        //     </form>
-        // )
     }
-};
+}
 
 LoginForm.propTypes = {
     classes: PropTypes.object.isRequired,
