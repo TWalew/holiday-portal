@@ -66,8 +66,8 @@ export default class WallChart extends React.Component {
             typeValue: 'holidays',
             startingValue: 'morning',
             endingValue: 'endOfDay',
-            currentDate: moment(new Date(new Date().getFullYear(),new Date().getMonth(),1)),
-            stopDate:  moment(new Date(new Date().getFullYear(),new Date().getMonth() + 1,1)),
+            currentDate: moment(new Date(new Date().getFullYear(), new Date().getMonth(), 1)),
+            stopDate: moment(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)),
             loggedInUser: null,
             datePickerStartDate: new Date(),
             datePickerEndDate: new Date(),
@@ -152,7 +152,6 @@ export default class WallChart extends React.Component {
     }
 
     getDaysInMonth() {
-        console.log('WIDTH ::::::::', window.innerWidth);
         let dateArray = [];
         let currentDate = this.state.currentDate;
         let stopDate = this.state.stopDate;
@@ -221,19 +220,23 @@ export default class WallChart extends React.Component {
     }
 
     handleModalShow(user, day) {
-        this.checkDaysOff(user, day, 'holidays');
-        this.checkDaysOff(user, day, 'remoteDays');
-        this.checkDaysOff(user, day, 'sickLeave');
-        this.checkDaysOff(user, day, 'unpaidLeave');
-        this.setState({
-            datePickerStartDate: day.date,
-            datePickerEndDate: day.date,
-            typeValue: typeVal,
-            modalData: {
-                user: user,
-            },
-            showModal: true,
-        });
+        if (this.state.loggedInUser.id === user.id) {
+            this.checkDaysOff(user, day, 'holidays');
+            this.checkDaysOff(user, day, 'remoteDays');
+            this.checkDaysOff(user, day, 'sickLeave');
+            this.checkDaysOff(user, day, 'unpaidLeave');
+            this.setState({
+                datePickerStartDate: day.date,
+                datePickerEndDate: day.date,
+                typeValue: typeVal,
+                modalData: {
+                    user: user,
+                },
+                showModal: true,
+            });
+        } else {
+            alert('This is not your user');
+        }
     }
 
     handleModalSubmit() {
@@ -334,7 +337,7 @@ export default class WallChart extends React.Component {
                                                      return moment(value.day).format('L') ===
                                                          moment(day.date).format('L') &&
                                                          (value.half === 'first' || value.half === 'both');
-                                                 }) ? ' remote' : '')+
+                                                 }) ? ' remote' : '') +
                                                  (user.sickLeave.find(function (value) {
                                                      return moment(value.day).format('L') ===
                                                          moment(day.date).format('L') &&
@@ -365,12 +368,12 @@ export default class WallChart extends React.Component {
                                             + (user.sickLeave.find(function (value) {
                                                 return moment(value.day).format('L') ===
                                                     moment(day.date).format('L') &&
-                                                    (value.half === 'first' || value.half === 'both');
+                                                    (value.half === 'second' || value.half === 'both');
                                             }) ? ' sick' : '')
                                             + (user.unpaidLeave.find(function (value) {
                                                 return moment(value.day).format('L') ===
                                                     moment(day.date).format('L') &&
-                                                    (value.half === 'first' || value.half === 'both');
+                                                    (value.half === 'second' || value.half === 'both');
                                             }) ? ' unpaid' : '')
                                             }>
                                             </div>
@@ -509,7 +512,6 @@ export default class WallChart extends React.Component {
                         </div>
                     </Modal.Footer>
                 </Modal>
-                <br/>
                 <table>
                     <thead>
                     <tr>
@@ -517,7 +519,6 @@ export default class WallChart extends React.Component {
                             <div></div>
                         </th>
                         <th className="month-pagination" colSpan={10}>
-                            <br/>
                             <a onClick={this.monthPagination.bind(this, -1)}>
                                 <FontAwesomeIcon icon="arrow-left"/>
                             </a>
