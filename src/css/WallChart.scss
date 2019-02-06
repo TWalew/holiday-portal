@@ -90,6 +90,14 @@ div.person_container a.person, div.person_container span.description {
           background: #6c9;
         }
 
+        &.sick {
+          background: #966;
+        }
+
+        &.unpaid {
+          background: #369;
+        }
+
         span {
           position: relative;
           z-index: 998;

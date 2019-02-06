@@ -255,6 +255,16 @@ class Header extends React.Component {
                                                     <div className='legend-remote'></div>
                                                 </label>
                                             </div>
+                                            <div className='text-center'>
+                                                <label>
+                                                    Sick :
+                                                    <div className='legend-sick'></div>
+                                                </label>
+                                                <label>
+                                                    Unpaid :
+                                                    <div className='legend-unpaid'></div>
+                                                </label>
+                                            </div>
                                         </div>
                                     </DialogContent>
                                 </Paper>

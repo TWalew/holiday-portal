@@ -20,6 +20,14 @@ const typeValues = [
     {
         value: 'remoteDays',
         label: 'Remote'
+    },
+    {
+        value: 'sickLeave',
+        label: 'Sick Leave'
+    },
+    {
+        value: 'unpaidLeave',
+        label: 'Unpaid Leave'
     }
 ];
 const startingValues = [
@@ -144,12 +152,10 @@ export default class WallChart extends React.Component {
     }
 
     getDaysInMonth() {
+        console.log('WIDTH ::::::::', window.innerWidth);
         let dateArray = [];
         let currentDate = this.state.currentDate;
         let stopDate = this.state.stopDate;
-        console.log("CURRENTDATE : ", currentDate);
-        console.log("STOPDATE : ",moment(currentDate).add(1,'month'));
-        console.log('STOPDATE2 : ', stopDate);
         while (currentDate < stopDate) {
             dateArray.push({
                 id: moment(currentDate).get('date'),
@@ -217,6 +223,8 @@ export default class WallChart extends React.Component {
     handleModalShow(user, day) {
         this.checkDaysOff(user, day, 'holidays');
         this.checkDaysOff(user, day, 'remoteDays');
+        this.checkDaysOff(user, day, 'sickLeave');
+        this.checkDaysOff(user, day, 'unpaidLeave');
         this.setState({
             datePickerStartDate: day.date,
             datePickerEndDate: day.date,
@@ -326,7 +334,17 @@ export default class WallChart extends React.Component {
                                                      return moment(value.day).format('L') ===
                                                          moment(day.date).format('L') &&
                                                          (value.half === 'first' || value.half === 'both');
-                                                 }) ? ' remote' : '')
+                                                 }) ? ' remote' : '')+
+                                                 (user.sickLeave.find(function (value) {
+                                                     return moment(value.day).format('L') ===
+                                                         moment(day.date).format('L') &&
+                                                         (value.half === 'first' || value.half === 'both');
+                                                 }) ? ' sick' : '')
+                                                 + (user.unpaidLeave.find(function (value) {
+                                                     return moment(value.day).format('L') ===
+                                                         moment(day.date).format('L') &&
+                                                         (value.half === 'first' || value.half === 'both');
+                                                 }) ? ' unpaid' : '')
                                                  }>
                                                 <span>{day.id}</span>
                                             </div>
@@ -344,6 +362,16 @@ export default class WallChart extends React.Component {
                                                     moment(day.date).format('L') &&
                                                     (value.half === 'second' || value.half === 'both');
                                             }) ? ' remote' : '')
+                                            + (user.sickLeave.find(function (value) {
+                                                return moment(value.day).format('L') ===
+                                                    moment(day.date).format('L') &&
+                                                    (value.half === 'first' || value.half === 'both');
+                                            }) ? ' sick' : '')
+                                            + (user.unpaidLeave.find(function (value) {
+                                                return moment(value.day).format('L') ===
+                                                    moment(day.date).format('L') &&
+                                                    (value.half === 'first' || value.half === 'both');
+                                            }) ? ' unpaid' : '')
                                             }>
                                             </div>
                                         </td>
