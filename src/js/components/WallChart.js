@@ -58,8 +58,8 @@ export default class WallChart extends React.Component {
             typeValue: 'holidays',
             startingValue: 'morning',
             endingValue: 'endOfDay',
-            currentDate: moment(new Date()),
-            stopDate: moment(this.currentDate).add(1, 'month').add(-1, 'days'),
+            currentDate: moment(new Date(new Date().getFullYear(),new Date().getMonth(),1)),
+            stopDate:  moment(new Date(new Date().getFullYear(),new Date().getMonth() + 1,1)),
             loggedInUser: null,
             datePickerStartDate: new Date(),
             datePickerEndDate: new Date(),
@@ -147,7 +147,10 @@ export default class WallChart extends React.Component {
         let dateArray = [];
         let currentDate = this.state.currentDate;
         let stopDate = this.state.stopDate;
-        while (currentDate <= stopDate) {
+        console.log("CURRENTDATE : ", currentDate);
+        console.log("STOPDATE : ",moment(currentDate).add(1,'month'));
+        console.log('STOPDATE2 : ', stopDate);
+        while (currentDate < stopDate) {
             dateArray.push({
                 id: moment(currentDate).get('date'),
                 date: moment(currentDate)._d,
@@ -167,10 +170,9 @@ export default class WallChart extends React.Component {
 
     checkDaysOff(user, day, array) {
         user[array].find(function (el) {
+            console.log('found');
             if (moment(el.day).format('L') === moment(day.date).format('L')) {
-                typeVal = [array];
-            } else {
-                typeVal = 'holidays';
+                typeVal = array;
             }
         });
     }
