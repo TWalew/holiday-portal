@@ -4,7 +4,7 @@ import moment from "moment";
 
 const ACT_GETALLUSERS = 'GETALLUSERS';
 const ACT_REQUESTDAYSOFF = 'REQUESTDAYSOFF';
-const ACT_CANCELREQUESTEDDAYOFF = 'CANCELREQUESTEDDAYOFF';
+const ACT_CANCELREQUESTEDDAYSOFF = 'CANCELREQUESTEDDAYSOFF';
 
 class UserStore extends EventEmitter {
     constructor() {
@@ -17,7 +17,7 @@ class UserStore extends EventEmitter {
         this._actionMap = {
             [ACT_GETALLUSERS]: this._getAllUsers.bind(this),
             [ACT_REQUESTDAYSOFF]: this._requestDaysOff.bind(this),
-            [ACT_CANCELREQUESTEDDAYOFF]: this._cancelRequestedDaysOff.bind(this),
+            [ACT_CANCELREQUESTEDDAYSOFF]: this._cancelRequestedDaysOff.bind(this),
         };
     }
 

@@ -84,18 +84,34 @@ div.person_container a.person, div.person_container span.description {
 
         &.holiday {
           background: #c69;
+
+          &:hover {
+            background: rgba(204, 102, 153, 0.9);
+          }
         }
 
         &.remote {
           background: #6c9;
+
+          &:hover {
+            background: rgba(102, 204, 153, 0.9);
+          }
         }
 
         &.sick {
           background: #966;
+
+          &:hover {
+            background: rgba(153, 102, 102, 0.9);
+          }
         }
 
         &.unpaid {
           background: #369;
+
+          &:hover {
+            background: rgba(51, 102, 153, 0.9);
+          }
         }
 
         span {

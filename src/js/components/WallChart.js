@@ -56,6 +56,9 @@ const morning = 'morning';
 const lunchtime = 'lunchtime';
 const endOfDay = 'endOfDay';
 const afternoon = 'afternoon';
+const first = 'first';
+const second = 'second';
+const both = 'both';
 
 export default class WallChart extends React.Component {
     constructor(props) {
@@ -90,6 +93,7 @@ export default class WallChart extends React.Component {
         this.handleModalCancel = this.handleModalCancel.bind(this);
         this.monthPagination = this.monthPagination.bind(this);
         this.checkDaysOff = this.checkDaysOff.bind(this);
+        this.pushToArray = this.pushToArray.bind(this);
     }
 
     componentDidMount() {
@@ -122,33 +126,33 @@ export default class WallChart extends React.Component {
         let endVal = this.state.endingValue;
         if (start.getDate() === end.getDate()) {
             if (startVal === morning && endVal === endOfDay) {
-                return 'both';
+                return both;
             } else if (startVal === morning && endVal === lunchtime) {
-                return 'first';
+                return first;
             } else if (startVal === afternoon && endVal === endOfDay) {
-                return 'second';
+                return second;
             }
         } else if (start.getDate() !== end.getDate() && start.getDate() === current.getDate()) {
             if (startVal === morning && endVal === endOfDay) {
-                return 'both'
+                return both;
             } else if (startVal === morning && endVal === lunchtime) {
-                return 'both';
+                return both;
             } else if (startVal === afternoon && endVal === endOfDay) {
-                return 'second';
+                return second;
             } else if (startVal === afternoon && endVal === lunchtime) {
-                return 'second'
+                return second;
             }
         } else if (start.getDate() !== end.getDate() && end.getDate() === current.getDate()) {
             if (startVal === morning && endVal === endOfDay) {
-                return 'both'
+                return both;
             } else if (startVal === morning && endVal === lunchtime) {
-                return 'first';
+                return first;
             } else if (startVal === afternoon && endVal === endOfDay) {
-                return 'both';
+                return both;
             } else if (startVal === afternoon && endVal === lunchtime) {
-                return 'first'
+                return first;
             }
-        } else return 'both'
+        } else return both;
     }
 
     getDaysInMonth() {
@@ -175,7 +179,6 @@ export default class WallChart extends React.Component {
 
     checkDaysOff(user, day, array) {
         user[array].find(function (el) {
-            console.log('found');
             if (moment(el.day).format('L') === moment(day.date).format('L')) {
                 typeVal = array;
             }
@@ -239,11 +242,9 @@ export default class WallChart extends React.Component {
         }
     }
 
-    handleModalSubmit() {
-        let that = this;
-        let dateArr = this.getDateArray(this.state.datePickerStartDate, this.state.datePickerEndDate);
-        let days = [];
-
+    pushToArray(dateArr) {
+        let that = this,
+            days = [];
         dateArr.forEach(function (value, index, array) {
             if (index === 0) {
                 let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
@@ -256,6 +257,12 @@ export default class WallChart extends React.Component {
                 days.push({day: value, half: half})
             }
         });
+        return days;
+    }
+
+    handleModalSubmit() {
+        let dateArr = this.getDateArray(this.state.datePickerStartDate, this.state.datePickerEndDate);
+        let days = this.pushToArray(dateArr);
         UserActions.RequestDayOff(this.state.modalData.user.id, days, this.state.typeValue);
         this.setState({
                 showModal: false
@@ -264,23 +271,8 @@ export default class WallChart extends React.Component {
     }
 
     handleModalCancel() {
-        let that = this;
         let canceledDateArr = this.getDateArray(this.state.datePickerStartDate, this.state.datePickerEndDate);
-        let canceledDays = [];
-
-        canceledDateArr.forEach(function (value, index, array) {
-            if (index === 0) {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                canceledDays.push({day: value, half: half});
-            } else if (index === array.length - 1) {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                canceledDays.push({day: value, half: half});
-            } else {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                canceledDays.push({day: value, half: half})
-            }
-        });
-
+        let canceledDays = this.pushToArray(canceledDateArr);
         UserActions.CancelRequestedHoliday(this.state.modalData.user.id, canceledDays, this.state.typeValue);
         this.setState({
                 showModal: false
