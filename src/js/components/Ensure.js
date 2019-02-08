@@ -35,4 +35,4 @@ export default class Ensure extends React.Component {
 Ensure.propTypes = {
     visible: PropTypes.bool.isRequired,
     ensureAction: PropTypes.func,
-}
+};

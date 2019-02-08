@@ -149,6 +149,22 @@ div.person_container a.person, div.person_container span.description {
           text-align: center;
           line-height: 50px;
           font-weight: 400;
+
+          .days-remaining {
+            position: absolute;
+            background: #883054;
+            font-size: 11px;
+            min-width: 25px;
+            line-height: 16px;
+            text-align: center;
+            text-decoration: none;
+            border-bottom: none !important;
+            border-radius: 6px;
+            left: -5px;
+            top: -5px;
+            padding-left: 2px;
+            padding-right: 2px;
+          }
         }
 
         .person_container {

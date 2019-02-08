@@ -306,7 +306,9 @@ export default class WallChart extends React.Component {
                 <tr key={user.id}>
                     <th className="person">
                         <div className="person_container">
-                            <span className="img-circle">{acronym}</span>
+                            <span className="img-circle">{acronym}
+                            <span className="days-remaining">25</span>
+                            </span>
                             <a className='person'>{user.name}</a>
                         </div>
                     </th>
