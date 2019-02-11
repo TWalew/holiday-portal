@@ -115,9 +115,6 @@ export default class WallChart extends React.Component {
             arr.push(new Date(dt));
             dt.setDate(dt.getDate() + 1);
         }
-        if (start.getTime() !== end.getTime()) {
-            arr.push(new Date(end));
-        }
         return arr;
     }
 
@@ -246,16 +243,8 @@ export default class WallChart extends React.Component {
         let that = this,
             days = [];
         dateArr.forEach(function (value, index, array) {
-            if (index === 0) {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                days.push({day: value, half: half});
-            } else if (index === array.length - 1) {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                days.push({day: value, half: half});
-            } else {
-                let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
-                days.push({day: value, half: half})
-            }
+            let half = that.checkForHalfDays(array[0], array[array.length - 1], value);
+            days.push({day: value, half: half, dateRequested: moment().set({'hour': 0, 'minute': 0, 'second': 0}).format('L')});
         });
         return days;
     }
@@ -307,7 +296,7 @@ export default class WallChart extends React.Component {
                     <th className="person">
                         <div className="person_container">
                             <span className="img-circle">{acronym}
-                            <span className="days-remaining">25</span>
+                                <span className="days-remaining">{user.remainingDays}</span>
                             </span>
                             <a className='person'>{user.name}</a>
                         </div>
@@ -500,10 +489,12 @@ export default class WallChart extends React.Component {
 
                         <Button variant="outlined" color="default" size="large" className='pull-left'
                                 onClick={this.handleModalClose}>Close</Button>
-                        <div className='col-sm-7 text-center'>
-                            <Button variant="outlined" color="secondary" size="large"
-                                    onClick={this.handleModalCancel}>Cancel Holiday</Button>
-                        </div>
+                        {moment(this.state.datePickerStartDate).set({'hour': 0, 'minute': 0, 'second': 0}).format('L') >=
+                        moment().set({'hour': 0, 'minute': 0, 'second': 0}).format('L') ?
+                            <div className='col-sm-7 text-center'>
+                                <Button variant="outlined" color="secondary" size="large"
+                                        onClick={this.handleModalCancel}>Cancel Holiday</Button>
+                            </div> : null}
                     </Modal.Footer>
                 </Modal>
                 <table>

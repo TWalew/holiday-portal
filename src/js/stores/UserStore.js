@@ -31,15 +31,18 @@ class UserStore extends EventEmitter {
         newUsers = [...this.data.users],
         type = actionData.type;
 
-        days.forEach(function (day) {
-            let ind = newUsers.findIndex(u => u.id === actionData.id);
-            newUsers[ind] = {
-                ...newUsers[ind],
-                [type]: [
-                    ...newUsers[ind][type],
-                    day
-                ]
-            };
+        days.forEach(function (day,index) {
+        let ind = newUsers.findIndex(u => u.id === actionData.id);
+            if (days.index !== index) {
+                newUsers[ind] = {
+                    ...newUsers[ind],
+                    [type]: [
+                        ...newUsers[ind][type],
+                        day
+                    ],
+                    remainingDays: newUsers[ind].remainingDays - 1
+                };
+            }
         });
 
         let newData = {
@@ -63,7 +66,8 @@ class UserStore extends EventEmitter {
                         ...newUsers[ind],
                         [type]: [
                             ...newUsers[ind][type].slice(0,index), ...newUsers[ind][type].slice(index + 1)
-                        ]
+                        ],
+                        remainingDays: newUsers[ind].remainingDays + 1
                     }
                 }
             });
