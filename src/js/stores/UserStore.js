@@ -28,11 +28,11 @@ class UserStore extends EventEmitter {
 
     _requestDaysOff(actionData) {
         let days = actionData.days,
-        newUsers = [...this.data.users],
-        type = actionData.type;
+            newUsers = [...this.data.users],
+            type = actionData.type,
+            ind = newUsers.findIndex(u => u.id === actionData.id);
 
-        days.forEach(function (day,index) {
-        let ind = newUsers.findIndex(u => u.id === actionData.id);
+        days.forEach(function (day, index) {
             if (days.index !== index) {
                 newUsers[ind] = {
                     ...newUsers[ind],
@@ -40,10 +40,19 @@ class UserStore extends EventEmitter {
                         ...newUsers[ind][type],
                         day
                     ],
-                    remainingDays: newUsers[ind].remainingDays - 1
                 };
             }
         });
+        if (type === 'holidays') {
+            days.forEach(function (day, index) {
+                if (days.index !== index) {
+                    newUsers[ind] = {
+                        ...newUsers[ind],
+                        remainingDays: newUsers[ind].remainingDays - 1
+                    }
+                }
+            })
+        }
 
         let newData = {
             ...this.data,
@@ -55,23 +64,33 @@ class UserStore extends EventEmitter {
 
     _cancelRequestedDaysOff(actionData) {
         let canceledDays = actionData.days,
-        newUsers = [...this.data.users],
-        type = actionData.type;
+            newUsers = [...this.data.users],
+            type = actionData.type,
+            ind = newUsers.findIndex(u => u.id === actionData.id);
 
         canceledDays.forEach(function (day) {
-            let ind = newUsers.findIndex(u => u.id === actionData.id);
             newUsers[ind][type].forEach(function (el, index) {
                 if (moment(el.day).format('L') === moment(day.day).format('L')) {
                     newUsers[ind] = {
                         ...newUsers[ind],
                         [type]: [
-                            ...newUsers[ind][type].slice(0,index), ...newUsers[ind][type].slice(index + 1)
+                            ...newUsers[ind][type].slice(0, index), ...newUsers[ind][type].slice(index + 1)
                         ],
-                        remainingDays: newUsers[ind].remainingDays + 1
                     }
                 }
             });
         });
+
+        if (type === 'holidays') {
+            canceledDays.forEach(function (day, index) {
+                if (canceledDays.index !== index) {
+                    newUsers[ind] = {
+                        ...newUsers[ind],
+                        remainingDays: newUsers[ind].remainingDays + 1
+                    }
+                }
+            })
+        }
 
         let newData = {
             ...this.data,
